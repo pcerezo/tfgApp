@@ -1,3 +1,7 @@
 index:
   path: /
   controller: App\Controller\PortadaController::index
+
+buscador:
+  path: /busqueda
+  controller: App\Controller\BuscadorController::index
