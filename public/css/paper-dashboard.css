@@ -3015,7 +3015,7 @@ License - nucleoapp.com/license/
     overflow: auto;
     width: 260px;
     z-index: 4;
-    padding-bottom: 100px; }
+    padding-bottom: 100px;}
     .sidebar .sidebar-wrapper .dropdown .dropdown-backdrop,
     .off-canvas-sidebar .sidebar-wrapper .dropdown .dropdown-backdrop {
       display: none !important; }
@@ -3044,12 +3044,13 @@ License - nucleoapp.com/license/
   .sidebar .nav,
   .off-canvas-sidebar .nav {
     margin-top: 20px;
-    display: block; }
+    display: block;
+    align-self: flex-end;
+  }
     .sidebar .nav .caret,
     .off-canvas-sidebar .nav .caret {
       top: 14px;
-      position: absolute;
-      right: 10px; }
+      position: absolute;}
     .sidebar .nav li > a + div .nav li > a,
     .off-canvas-sidebar .nav li > a + div .nav li > a {
       margin-top: 7px; }

@@ -2,6 +2,18 @@ index:
   path: /
   controller: App\Controller\PortadaController::index
 
-buscador:
-  path: /busqueda
+#buscador:
+#  path: /busqueda
+#  controller: App\Controller\BuscadorController::index
+
+buscador_mapas:
+  path: /busqueda/mapas_fotos
   controller: App\Controller\BuscadorController::index
+
+buscador_datos:
+  path: /busqueda/datos
+  controller: App\Controller\BuscadorController::datos
+
+usuarios:
+  path: /usuarios
+  controller: App\Controller\UserController::index
