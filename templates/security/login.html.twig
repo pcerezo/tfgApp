@@ -15,9 +15,11 @@
 
 {% block main_container %}
 <div id="main" class="container grid grid-cols-12">
-    <form method="post" class="col-start-6">
+    <form method="post" class="col-start-6 w-max">
         {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            <div class="bg-yellow-200 border-l-4 border-orange-500 text-yellow-700 p-4 rounded-lg" role="alert">
+                <p class="text-lg font-semibold">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+            </div>
         {% endif %}
 
         {% if app.user %}
@@ -26,7 +28,7 @@
             </div>
         {% endif %}
 
-        <div class="border-solid border-2 rounded-lg grid justify-items-center space-y-4 w-min">
+        <div class="border-solid border-2 rounded-lg grid justify-items-center space-y-4">
             <h1 class="h3 mb-3 font-weight-normal">Inicia sesión</h1>
             <div id="email_input">
                 <label for="inputEmail">Email</label>

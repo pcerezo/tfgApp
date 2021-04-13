@@ -17,3 +17,7 @@ buscador_datos:
 usuarios:
   path: /usuarios
   controller: App\Controller\UserController::index
+
+contacto:
+  path: /contacto
+  controller: App\Controller\ContactoController::index

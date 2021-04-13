@@ -58,7 +58,7 @@
     </div>
 
     <div class="wrapper">
-        <div class="main-panel" style="height: 100vh;">
+        <div class="main-panel h-screen" style="height: 100vh;">
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
                 <div class="container-fluid">
@@ -108,7 +108,8 @@
                 </div> <!--End container-fluid-->
             </nav>
             <!-- End Navbar -->
-            <div class="content">
+            <!--Contenido-->
+            <div class="content h-screen">
                 {% block contenido %}
                 {% endblock %}
                 <!--<div class="row">
@@ -119,7 +120,10 @@
             </div>
             {% block sidebar %}
             {% endblock %}
-            <footer class="footer" style="position: absolute; bottom: 0; width: -webkit-fill-available;">
+            <footer class="container-fluid h-24 grid grid-cols-12 border-solid border-t-2">
+                <div class="col-start-2 col-span-2">
+                    <h2>Footer</h2>
+                </div>
             </footer>
         </div>
     </div>
