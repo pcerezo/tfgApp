@@ -11,8 +11,15 @@ class ContactoController extends AbstractController
     #[Route('/contacto', name: 'contacto')]
     public function index(): Response
     {
+        $logueado = $this->getUser();
+        
         return $this->render('contacto/index.html.twig', [
             'controller_name' => 'ContactoController',
+            'logueado' => $logueado,
+            'activeInicio' => '',
+            'activeBusqueda' => '',
+            'activeContacto' => 'active',
+            'activeLogin' => '',
         ]);
     }
 }

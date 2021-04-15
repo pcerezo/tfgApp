@@ -51,8 +51,12 @@
             <ul>
                 <li><a href="/">Inicio</a></li>
                 <li class="active"><a href="/busqueda">Mapas y datos</a></li>
-                <li><a href="">Contacto</a></li>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logueado == false %}
+                    <li><a href="/login">Login</a></li>
+                {% else %}
+                    <li><a href="/logout">Logout</a></li>
+                {% endif %}
             </ul>
         </nav>
     </div>

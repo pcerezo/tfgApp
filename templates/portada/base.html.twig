@@ -34,7 +34,18 @@
                 <h1><a href="#">Contaminación lúminica en Granada</a></h1>
             </div>
             <!-- Nav -->
-            {% block nav %}{% endblock %}
+            <nav id="nav" class="self-center col-start-9 col-span-4">
+                <ul>
+                    <li class="{{ activeInicio }}"><a href="/">Inicio</a></li>
+                    <li class="{{ activeBusqueda }}"><a href="/busqueda/mapas_fotos">Mapas y datos</a></li>
+                    <li class="{{ activeContacto }}"><a href="/contacto">Contacto</a></li>
+                    {% if logueado == false %}
+                    <li class="{{ activeLogin }}"><a href="/login">Login</a></li>
+                    {% else %}
+                    <li><a href="/logout">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
     </div>
     {% block banner %}{% endblock %}

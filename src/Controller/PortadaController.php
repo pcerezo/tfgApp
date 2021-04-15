@@ -11,8 +11,18 @@ class PortadaController extends AbstractController
     #[Route('/portada', name: 'portada')]
     public function index(): Response
     {
+        $logueado = false;
+        if ($this->getUser()) {
+            $logueado = true;
+        }
+
         return $this->render('portada/index.html.twig', [
             'controller_name' => 'PortadaController',
+            'logueado' => $logueado,
+            'activeInicio' => 'active',
+            'activeBusqueda' => '',
+            'activeContacto' => '',
+            'activeLogin' => '',
         ]);
     }
 }

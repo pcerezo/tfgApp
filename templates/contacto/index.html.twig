@@ -1,17 +1,20 @@
 {% extends 'portada/base.html.twig' %}
 
+{% block title %}
+<title>Página de contacto</title>
+{% endblock %}
+
 {% block link_meta %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="page_type" content="np-template-header-footer-from-plugin">
-    <title>Page 6</title>
     <link rel="stylesheet" href="nicepage.css" media="screen">
     <link rel="stylesheet" href="Page-6.css" media="screen">
     <script class="u-script" type="text/javascript" src="jquery-1.9.1.min.js" defer=""></script>
     <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 3.11.5, nicepage.com">
-    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
+    
  
     <script type="application/ld+json">{
 		"@context": "http://schema.org",
@@ -30,75 +33,87 @@
 {% block nav %}
 <nav id="nav" class="self-center col-start-9 col-span-4">
     <ul>
-        <li class="active"><a href="/">Inicio</a></li>
+        <li><a href="/">Inicio</a></li>
         <li><a href="/busqueda/mapas_fotos">Mapas y datos</a></li>
-        <li><a href="/contacto">Contacto</a></li>
+        <li class="active"><a href="/contacto">Contacto</a></li>
         <li><a href="/login">Login</a></li>
     </ul>
 </nav>
 {% endblock %}
 
 {% block main_container %}
-    <section class="u-clearfix u-section-2" id="sec-0088">
+    <section class="u-clearfix u-section-2 mb-0" id="sec-0088">
       <div class="u-clearfix u-sheet u-sheet-1">
         <div class="u-expanded-width-md u-expanded-width-sm u-expanded-width-xs u-list u-repeater u-list-1">
           <div class="u-container-style u-list-item u-repeater-item">
             <div class="u-container-layout u-similar-container u-container-layout-1">
-              <h6 class="u-text u-text-default u-text-1">About Us</h6>
+              <h6 class="u-text u-text-default u-text-1">Sobre Nosotros</h6>
               <p class="u-text u-text-grey-40 u-text-2">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
               <a href="https://nicepage.com" class="u-border-2 u-border-palette-4-base u-btn u-btn-rectangle u-button-style u-none u-btn-1">View More</a>
             </div>
           </div>
           <div class="u-container-style u-list-item u-repeater-item">
             <div class="u-container-layout u-similar-container u-container-layout-2">
-              <h6 class="u-text u-text-default u-text-3">What We Do</h6>
+              <h6 class="u-text u-text-default u-text-3">¿Qué hacemos?</h6>
               <p class="u-text u-text-grey-40 u-text-4">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
               <a href="https://nicepage.com" class="u-border-2 u-border-palette-4-base u-btn u-btn-rectangle u-button-style u-none u-btn-2">View More</a>
             </div>
           </div>
-          <div class="u-container-style u-list-item u-repeater-item">
-            <div class="u-container-layout u-similar-container u-container-layout-3">
-              <h6 class="u-text u-text-default u-text-5">How It Work</h6>
-              <p class="u-text u-text-grey-40 u-text-6">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
-              <a href="https://nicepage.com" class="u-border-2 u-border-palette-4-base u-btn u-btn-rectangle u-button-style u-none u-btn-3">View More</a>
-            </div>
-          </div>
         </div>
         <div class="u-clearfix u-expanded-width-md u-expanded-width-sm u-expanded-width-xs u-layout-wrap u-layout-wrap-1">
-          <div class="u-layout">
-            <div class="u-layout-col">
-              <div class="u-container-style u-image u-layout-cell u-left-cell u-right-cell u-size-30 u-image-1" data-image-width="1038" data-image-height="1080">
-                <div class="u-container-layout u-container-layout-4"></div>
-              </div>
-              <div class="u-align-center u-container-style u-layout-cell u-left-cell u-palette-4-base u-right-cell u-size-30 u-layout-cell-2">
-                <div class="u-container-layout u-valign-middle u-container-layout-5">
-                  <h3 class="u-text u-text-7">Call Us</h3>
-                  <h2 class="u-text u-text-8">+ 1 141 66 77</h2>
+            <div class="u-container-style u-list-item u-repeater-item">
+                <div class="u-container-layout u-similar-container u-container-layout-3">
+                    <h6 class="u-text u-text-default u-text-5">¿Qué puedes encontrar aquí?</h6>
+                    <p class="u-text u-text-grey-40 u-text-6">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
+                    <a href="https://nicepage.com" class="u-border-2 u-border-palette-4-base u-btn u-btn-rectangle u-button-style u-none u-btn-3">View More</a>
                 </div>
-              </div>
             </div>
-          </div>
+            <div class="u-layout">
+                <div class="u-layout-col">
+                    <div class="u-align-center u-container-style u-layout-cell u-left-cell  u-right-cell u-size-30 u-layout-cell-2">
+                        <img src="/images/foto_contacto.jpg">                
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
     </section>
-    <section class="u-clearfix u-section-3" id="sec-b205">
-      <div class="u-clearfix u-sheet u-sheet-1">
-        <div class="u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
-          <div class="u-layout">
-            <div class="u-layout-row">
-              <div class="u-container-style u-image u-layout-cell u-size-30 u-image-1" data-image-width="400" data-image-height="265">
-                <div class="u-container-layout u-container-layout-1"></div>
-              </div>
-              <div class="u-align-center u-container-style u-layout-cell u-size-30 u-layout-cell-2">
-                <div class="u-container-layout u-valign-middle u-container-layout-2">
-                  <h2 class="u-text u-text-default u-text-1">Titular de muestra</h2>
-                  <p class="u-text u-text-default u-text-2">Texto de ejemplo. Lorem ipsum dolor sit amet, consectetur adipiscing elit nullam nunc justo sagittis suscipit ultrices.</p>
-                </div>
-              </div>
+    <section class="u-clearfix u-section-3">              
+        <div class="row grid grid-cols-12">
+            <div class="col-start-3 col-span-8">
+                <h2 class="u-text u-text-default u-text-1">Contacta con nosotros</h2>
+                <p class="u-text font-family text-xl u-text-1 w-1/2 text-left">Si eres una autoridad municipal que desea conocer o promocionar la calidad lumínica noctura del cielo de su municipio o comarca, rellena el siguiente formulario para enviarnos tu solicitud de medición lumínica</p>
             </div>
-          </div>
         </div>
-      </div>
+        <div class="row grid grid-cols-12">
+            <div class="col-start-5 col-span-3 mb-10">
+                <form class="">
+                    <h4 class="mb-3 font-weight-normal">Introduce los siguientes datos</h1>
+                    <div class="ml-24 w-full">
+                        <div id="email_input">
+                            <label for="">Municipio</label>
+                            <input type="" value="" name="" id="" class="form-control" required autofocus><br>
+                        </div>
+                        <div id="password_input">
+                            <label for="">Nombre y apellidos</label>
+                            <input type="" name="" id="" class="" required><br>
+                        </div>
+                        <div >
+                            <label>Asunto</label>
+                            <input type="text"><br>
+                        </div>
+                        <div id="" class="">
+                            <label>Mensaje</label>
+                            <textarea placeholder="Escribe aquí tu petición" class="w-1/4"></textarea>
+                        </div>
+                        <input type="hidden" name="" value="">
+                        <button class="btn btn-lg btn-primary" type="submit">
+                            Enviar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </section>
 {% endblock %}
 
