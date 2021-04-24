@@ -3,6 +3,55 @@
 {% block title %}<title>Log in!</title>{% endblock %}
 
 {% block main_container %}
+<div class="flex flex-1 items-center justify-center">
+    <div class="rounded-lg sm:border-2 px-4 lg:px-24 py-16 lg:max-w-xl sm:max-w-md w-full text-center">
+        <form method="post" class="text-center">
+            {% if error %}
+                <div class="bg-yellow-200 border-l-4 border-orange-500 text-yellow-700 p-4 rounded-lg" role="alert">
+                    <p class="text-lg font-semibold">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="mb-3">
+                    You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                </div>
+            {% endif %}
+
+            <h1 class="font-bold tracking-wider text-3xl mb-8 w-full text-gray-600">
+                Inicia sesión
+            </h1>
+            <div class="py-2 text-left">
+                <input type="email" class="bg-gray-200 border-2 border-gray-100 focus:outline-none bg-gray-100 block w-full py-2 px-4 rounded-lg focus:border-gray-700 " 
+                value="{{ last_username }}" name="email" id="inputEmail" placeholder="Email" />
+            </div>
+            <div class="py-2 text-left">
+                <input type="password" class="bg-gray-200 border-2 border-gray-100 focus:outline-none bg-gray-100 block w-full py-2 px-4 rounded-lg focus:border-gray-700 " 
+                name="password" id="inputPassword" placeholder="Password" required/>
+            </div>
+            <input type="hidden" name="_csrf_token"
+                value="{{ csrf_token('authenticate') }}"
+            >
+            <div class="py-2">
+                <button type="submit" class="border-2 border-gray-100 focus:outline-none bg-purple-600 text-white font-bold tracking-wider block w-full p-2 rounded-lg focus:border-gray-700 hover:bg-purple-700">
+                    Iniciar sesión
+                </button>
+            </div>
+        </form>
+        <div class="text-center">
+            <a href="#" class="hover:underline">¿Olvidaste la contraseña?</a>
+        </div>
+        <div class="text-center mt-12">
+            <span>
+                Si no tienes una cuenta
+            </span>
+            <a href="#" class="font-light text-md text-indigo-600 underline font-semibold hover:text-indigo-800">Entra aquí</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block main_container_old %}
 <div id="main" class="container grid grid-cols-12">
     <form method="post" class="col-start-6 w-max">
         {% if error %}
