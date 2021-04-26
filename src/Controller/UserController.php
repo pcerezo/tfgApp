@@ -5,13 +5,17 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
+use App\Entity\Upload;
+use App\Form\PerfilFormType;
 
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'user')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $logueado = false;
         $nick="";
@@ -22,6 +26,21 @@ class UserController extends AbstractController
             $nick = $this->getUser()->getNick();
             $nombrecompleto = $this->getUser()->getNombreCompleto();
             $role = $this->getUser()->getRoles();
+            $email = $this->getUser()->getEmail();
+            $id = $this->getUser()->getId();
+        }
+
+        $upload = new Upload();
+        $form = $this->createForm(PerfilFormType::class, $upload);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $upload->getFotoPerfil();
+            $filename = md5($id).'.'.$file->guessExtension();
+            $file->move($this->getParameter('upload_directory'), $filename);
+            $upload->setFotoPerfil($filename);
+
+            return $this->redirectToRoute('index');
         }
 
         return $this->render('user/index.html.twig', [
@@ -34,6 +53,7 @@ class UserController extends AbstractController
             'nick' => $nick,
             'nombrecompleto' => $nombrecompleto,
             'role' => $role,
+            'form' => $form->createView(),
         ]);
     }
 
