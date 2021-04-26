@@ -12,8 +12,14 @@ class PortadaController extends AbstractController
     public function index(): Response
     {
         $logueado = false;
+        $nick="";
+        $nombrecompleto = "";
+        $role = "";
         if ($this->getUser()) {
             $logueado = true;
+            $nick = $this->getUser()->getNick();
+            $nombrecompleto = $this->getUser()->getNombreCompleto();
+            $role = $this->getUser()->getRoles();
         }
 
         return $this->render('portada/index.html.twig', [
@@ -23,6 +29,9 @@ class PortadaController extends AbstractController
             'activeBusqueda' => '',
             'activeContacto' => '',
             'activeLogin' => '',
+            'nick' => $nick,
+            'nombrecompleto' => $nombrecompleto,
+            'role' => $role,
         ]);
     }
 }

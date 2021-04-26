@@ -13,10 +13,27 @@ class UserController extends AbstractController
     #[Route('/user', name: 'user')]
     public function index(): Response
     {
-        $this->nuevoUsuario("uno@gmail.com", "probandoo", "elPruebas");
+        $logueado = false;
+        $nick="";
+        $nombrecompleto = "";
+        $role = "";
+        if ($this->getUser()) {
+            $logueado = true;
+            $nick = $this->getUser()->getNick();
+            $nombrecompleto = $this->getUser()->getNombreCompleto();
+            $role = $this->getUser()->getRoles();
+        }
 
         return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
+            'controller_name' => 'PortadaController',
+            'logueado' => $logueado,
+            'activeInicio' => 'active',
+            'activeBusqueda' => '',
+            'activeContacto' => '',
+            'activeLogin' => '',
+            'nick' => $nick,
+            'nombrecompleto' => $nombrecompleto,
+            'role' => $role,
         ]);
     }
 

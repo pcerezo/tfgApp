@@ -40,6 +40,11 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $nombrecompleto;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -129,6 +134,18 @@ class User implements UserInterface
     public function setNick(string $nick): self
     {
         $this->nick = $nick;
+
+        return $this;
+    }
+
+    public function getNombrecompleto(): ?string
+    {
+        return $this->nombrecompleto;
+    }
+
+    public function setNombrecompleto(string $nombrecompleto): self
+    {
+        $this->nombrecompleto = $nombrecompleto;
 
         return $this;
     }

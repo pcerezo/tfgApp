@@ -25,7 +25,7 @@
 
         {% block link_meta %}{% endblock %}
 	</head>
-	<body class="homepage">
+	<body class="">
 	<!-- Header -->
     <div id="header">
         <div class="container-fluid h-24 grid grid-cols-12 bg-blue-200">
@@ -48,16 +48,31 @@
             </nav>
         </div>
     </div>
-    {% block banner %}{% endblock %}
-	<!-- Header -->
+    <div id="page">
+        <div class="grid grid-cols-6 gap-5">
+        {% block banner %}{% endblock %}
+        {% if logueado == true and app.request.attributes.get('_route') != 'user' %}
+            <div id="usuario" class="col-start-5 col-span-2 ml-16 mr-5 mt-5 pl-5 pr-5 text-2xl border-double border-4 ">
+                <p class="font-bold">Logueado como {{ nombrecompleto }}</p>
+                <p>Alias: "{{ nick }}."</p>
+                <p>Rol: {{role.rango}}</p>
+                <a href="/user">Ir al perfil</a>
+            </div>
+        {% endif %}
+        </div>
+        <!-- Header -->
 
-	<!-- Main -->
-		<div id="page" class="mt-10">				
-			<!-- Main -->
-			{% block main_container %}{% endblock %}
-			<!-- Main -->
-		</div>
+        <!-- Main -->
+
+        {% block main_container %}
+        {% endblock %}
+        
+
+    </div>
 	<!-- /Main -->
+    <!--Margen usuario-->
+    
+    <!--/Margen usuario-->
 	<!-- Footer -->
     {% block footer %} {% endblock %}
 	<!-- /Footer -->
