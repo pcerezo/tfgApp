@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
 use App\Form\PerfilFormType;
+use App\Form\BotonEditarPerfilType;
 
 class UserController extends AbstractController
 {
@@ -39,17 +40,24 @@ class UserController extends AbstractController
             $linea = fgets($archivo_bio);
             $bio = $bio.$linea; // Se concatena línea a línea
         }
-
+        fclose($archivo_bio);
         // Obtengo el manejador de la base de datos
         $entityManager = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $formBotonEditar = $this->createForm(BotonEditarPerfilType::class, $user);
         $form = $this->createForm(PerfilFormType::class, $user);
+
+        $formBotonEditar->handleRequest($request);
+        $editar = false;
+        if ($formBotonEditar->isSubmitted()) {
+            $editar = true;
+        }
 
         // El formulario recibe la petición
         // (cuando se pulsa el botón)
         $form->handleRequest($request);
 
-        // Si se ha pulsado el botón y no hay errores...
+        // Si se ha pulsado el botón de subir archivo y no hay errores...
         if ($form->isSubmitted() && $form->isValid()) {
             // Se obtiene el archivo seleccionado
             $file = $user->getFotoPerfil();
@@ -80,8 +88,10 @@ class UserController extends AbstractController
             'nombrecompleto' => $nombrecompleto,
             'role' => $role,
             'form' => $form->createView(),
+            'formBotonEditarPerfil' => $formBotonEditar->createView(),
             'fotoPerfil' => $foto,
             'bio' => $bio,
+            'editar' => $editar,
         ]);
     }
 

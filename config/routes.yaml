@@ -15,7 +15,7 @@ buscador_datos:
   controller: App\Controller\BuscadorController::datos
 
 usuarios:
-  path: /usuarios
+  path: /user
   controller: App\Controller\UserController::index
 
 contacto:
