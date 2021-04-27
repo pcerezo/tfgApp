@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
-use App\Entity\Upload;
 use App\Form\PerfilFormType;
 
 class UserController extends AbstractController
@@ -21,6 +20,9 @@ class UserController extends AbstractController
         $nick="";
         $nombrecompleto = "";
         $role = "";
+        $foto = "";
+        $bio = "";
+
         if ($this->getUser()) {
             $logueado = true;
             $nick = $this->getUser()->getNick();
@@ -28,19 +30,43 @@ class UserController extends AbstractController
             $role = $this->getUser()->getRoles();
             $email = $this->getUser()->getEmail();
             $id = $this->getUser()->getId();
+            $foto = $this->getUser()->getFotoPerfil();
         }
 
-        $upload = new Upload();
-        $form = $this->createForm(PerfilFormType::class, $upload);
+        // Lectura de la biografía del usuario contenida en un archivo
+        $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
+        while (!feof($archivo_bio)) {
+            $linea = fgets($archivo_bio);
+            $bio = $bio.$linea; // Se concatena línea a línea
+        }
 
+        // Obtengo el manejador de la base de datos
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $form = $this->createForm(PerfilFormType::class, $user);
+
+        // El formulario recibe la petición
+        // (cuando se pulsa el botón)
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $file = $upload->getFotoPerfil();
-            $filename = md5($id).'.'.$file->guessExtension();
-            $file->move($this->getParameter('upload_directory'), $filename);
-            $upload->setFotoPerfil($filename);
 
-            return $this->redirectToRoute('index');
+        // Si se ha pulsado el botón y no hay errores...
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Se obtiene el archivo seleccionado
+            $file = $user->getFotoPerfil();
+            $filename = md5($id).'.'.$file->guessExtension();
+
+            // Se comprueba que el archivo tiene formato de imagen
+            if ($file->guessExtension() == 'jpg' || $file->guessExtension() == 'png') {
+                $file->move($this->getParameter('upload_directory'), $filename);
+                $user->setFotoPerfil($filename);
+            
+                // Almaceno en la base de datos del usuario su nueva foto de perfil
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                // Vamos a la página de inicio
+                return $this->redirectToRoute('index');
+            }
         }
 
         return $this->render('user/index.html.twig', [
@@ -54,6 +80,8 @@ class UserController extends AbstractController
             'nombrecompleto' => $nombrecompleto,
             'role' => $role,
             'form' => $form->createView(),
+            'fotoPerfil' => $foto,
+            'bio' => $bio,
         ]);
     }
 

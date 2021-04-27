@@ -3,15 +3,19 @@
 {% block title %}<title>Mi Perfil</title>{% endblock %}
 
 {% block main_container %}
-<div id="perfil" class="">
-    <p class="text-2xl">{{ nombrecompleto }}</p>
-    <p class="">Alias: {{ nick }} </p>
-    <p>Role: {{role.rango}} </p>
-    <textarea>Un poco sobre mí: </textarea>
-    <p>Última actividad</p>
-</div>
-
-<div class="container">
-    {{ form(form)}}
+<div id="main" class="container-fluid h-screen grid grid-cols-3 gap-4">
+    <div id="perfil" class="h-1/2 col-start-2 pl-52 pr-32 grid justify-items-center flex items-center">
+        {% if fotoPerfil != "" and fotoPerfil != null %}
+        <img src="/uploads/fotos_perfil/{{fotoPerfil}}" width="100" height="100">
+        {% endif %}
+        <p class="text-2xl">{{ nombrecompleto }}</p>
+        <p class="justify-self-start">Alias: {{ nick }} </p>
+        <p class="justify-self-start">Role: {{role.rango}} </p>
+        <label>Un poco sobre mí: {{ bio }}</label>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">Editar mi perfil</button>
+    </div>
+    <div class="col-start-3">
+        {{ form(form)}}
+    </div>
 </div>
 {% endblock %}

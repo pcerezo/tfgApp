@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Upload;
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +15,7 @@ class PerfilFormType extends AbstractType
     {
         $builder
             ->add('fotoPerfil', FileType::class, array(
-                'label' => 'Subir una foto'))
+                'label' => 'Subir una foto', 'data_class' => null))
             ->add('Aceptar', SubmitType::class)
         ;
     }
@@ -23,7 +23,7 @@ class PerfilFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Upload::class,
+            'data_class' => User::class,
         ]);
     }
 }

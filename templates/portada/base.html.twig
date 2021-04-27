@@ -52,11 +52,17 @@
         <div class="grid grid-cols-6 gap-5">
         {% block banner %}{% endblock %}
         {% if logueado == true and app.request.attributes.get('_route') != 'user' %}
-            <div id="usuario" class="col-start-5 col-span-2 ml-16 mr-5 mt-5 pl-5 pr-5 text-2xl border-double border-4 ">
-                <p class="font-bold">Logueado como {{ nombrecompleto }}</p>
-                <p>Alias: "{{ nick }}."</p>
-                <p>Rol: {{role.rango}}</p>
-                <a href="/user">Ir al perfil</a>
+            <div id="usuario" class="col-start-5 col-span-2 ml-16 mr-16 mt-5 pl-8 pr-4 text-2xl border-double border-4 ">
+                <div class="grid grid-cols-2 gap-4 flex justify-items-center">
+                    <p class="font-bold">{{ nombrecompleto }}</p>
+                    {% if fotoPerfil != "" and fotoPerfil != null %}
+                    <img src="/uploads/fotos_perfil/{{fotoPerfil}}" width="100" height="100">
+                    {% endif %}
+                    <p>Alias: "{{ nick }}."</p>
+                    <p>Rol: {{role.rango}}</p>
+                    <p class="col-span-2">Biografía: {{ bio }}</p>
+                    <a href="/user">Ir al perfil</a>
+                </div>
             </div>
         {% endif %}
         </div>
@@ -74,7 +80,9 @@
     
     <!--/Margen usuario-->
 	<!-- Footer -->
+    <footer class="container-fluid h-24 border-solid border-t-2">
     {% block footer %} {% endblock %}
+    </footer>
 	<!-- /Footer -->
 	<!-- Copyright -->
 		

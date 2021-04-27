@@ -15,11 +15,13 @@ class ContactoController extends AbstractController
         $logueado = $this->getUser();
         $nombrecompleto = "";
         $role = "";
+        $foto = "";
 
         if ($logueado){
             $nick = $this->getUser()->getNick();
             $nombrecompleto = $this->getUser()->getNombreCompleto();
             $role = $this->getUser()->getRoles();
+            $foto = $this->getUser()->getFotoPerfil();
         }
         
         return $this->render('contacto/index.html.twig', [
@@ -32,6 +34,7 @@ class ContactoController extends AbstractController
             'nick' => $nick,
             'nombrecompleto' => $nombrecompleto,
             'role' => $role,
+            'fotoPerfil' => $foto,
         ]);
     }
 }

@@ -45,6 +45,24 @@ class User implements UserInterface
      */
     private $nombrecompleto;
 
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $fotoPerfil;
+
+    public function getFotoPerfil()
+    {
+        return $this->fotoPerfil;
+    }
+
+    public function setFotoPerfil($foto)
+    {
+        $this->fotoPerfil = $foto;
+
+        return $this;
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;
