@@ -8,7 +8,7 @@ index:
 
 buscador_mapas:
   path: /busqueda/mapas_fotos
-  controller: App\Controller\BuscadorController::index
+  controller: App\Controller\BuscadorController::mapas_fotos
 
 buscador_datos:
   path: /busqueda/datos

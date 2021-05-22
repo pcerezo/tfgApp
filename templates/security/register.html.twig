@@ -1,0 +1,39 @@
+{% extends 'portada/index.html.twig' %}
+
+{% block title %}<title>Regístrate</title>{% endblock %}
+
+{% block main_container %}
+<div id="main" class="container mt-10">
+        <form method="post" class="">
+            <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+                <h3 class="font-bold tracking-wider text-3xl mb-8 w-max text-gray-600">Para registrarte necesitas tener el permiso del administrador.</h3>
+                <p class="text-xl">Solicita tu registro rellenando los siguientes datos:</p>
+                <div class="grid grid-cols-3 gap-4">
+                    <!--<div class="">-->
+                        <div id="campo-nombrecompleto" class="col-start-1">
+                            <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-first-name">Nombre completo:</label>
+                            <input class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-3 px-4 mb-3"
+                            type="text" name="nombrecompleto" id="grid-first-name" placeholder="Pepito Flores Del Bosque">
+                        </div>
+                        <div id="campo-nick" class="col-start-2">
+                            <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">Nick o apodo: </label>
+                            <input class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-3 px-4 mb-3" 
+                            type="text" id="grid-last-name" name="nick">
+                        </div>
+                        <div id="campo-email" class="col-start-3">
+                            <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">Correo electrónico: </label>
+                            <input class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-3 px-4 mb-3" type="email" name="email">
+                        </div>
+                        <div id="campo-role" class="col-start-1">
+                            <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">Actividad</label>
+                            <input class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-3 px-4 mb-3" type="text" name="actividad">
+                        </div>
+                    <!--</div>-->
+                </div>
+                <button class="border-2 border-gray-100 rounded self-center w-max px-4" type="submit">Enviar</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

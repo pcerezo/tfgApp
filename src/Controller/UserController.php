@@ -65,7 +65,7 @@ class UserController extends AbstractController
 
             // Se comprueba que el archivo tiene formato de imagen
             if ($file->guessExtension() == 'jpg' || $file->guessExtension() == 'png') {
-                $file->move($this->getParameter('upload_directory'), $filename);
+                $file->move($this->getParameter('directorio_fotos'), $filename);
                 $user->setFotoPerfil($filename);
             
                 // Almaceno en la base de datos del usuario su nueva foto de perfil

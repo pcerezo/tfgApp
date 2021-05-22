@@ -9,11 +9,26 @@
 {% endblock %}
 
 {% block contenido %}
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="description"></h3>
+<div class="col-md-12">
+    <h3 class="description"></h3>
+
+    {% if logueado %}
+    <div class="grid justify-items-center">
+      <h3>Puedes subir aquí los últimos datos de medición recogidos</h3>
+      {% if subido == 'true' %}
+      <div class="bg-green-500 bg-opacity-50">
+        <h3>Archivo subido con éxito</h3>
+      </div>
+      {% elseif subido == 'false' %}
+      <div class="bg-red-500 bg-opacity-50">
+        <h3>Error: el formato no es txt</h3>
+      </div>
+      {% endif %}
+      {{ form(form_archivo) }}
     </div>
+    {% endif %}
 </div>
+
 {% endblock %}
 
 {% block sidebar %}
