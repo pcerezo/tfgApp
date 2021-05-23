@@ -27,6 +27,19 @@
       {{ form(form_archivo) }}
     </div>
     {% endif %}
+
+    <!--Mostrar los datos disponibles-->
+    <div id="galeria" class="grid grid-cols-3 gap-4">
+      {% for row in datos %}
+        <!--Cada elemento rodeado por bordes-->
+        <div id="elemento" class="rounded border border-solid grid justify-items-center">
+          <p class="font-bold text-lg">{{ row.localizacion }}</p>
+          <p>{{ row.nombre }}</p>
+          <p>{{ row.fecha }}</p>
+          <a href="detalles/{{ row.id }}">Ver detalles</a>
+        </div>
+      {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

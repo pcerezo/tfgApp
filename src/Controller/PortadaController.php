@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PortadaController extends AbstractController
 {
+
     #[Route('/portada', name: 'portada')]
     public function index(): Response
     {

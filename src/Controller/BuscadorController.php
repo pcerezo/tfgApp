@@ -29,10 +29,48 @@ class BuscadorController extends AbstractController
         return $this->redirectToRoute('buscador_mapas');
     }
 
+    #[Route('/busqueda/detalles', name: 'buscador_detalles')]
+    public function detalles($id): Response {
+        $logueado = $this->getUser();
+
+        // A partir del Id obtengo el objeto de medición en cuestión
+        $entityManager = $this->getDoctrine()->getManager();
+
+        // Mostrar los datos disponibles en forma de galería
+        $conn = $entityManager->getConnection();
+
+        $sql = "SELECT * FROM medicion_generica WHERE id=$id";
+
+        $sentencia = $conn->prepare($sql);
+        $sentencia->execute();
+
+        $datos = $sentencia->fetchAll();
+        // Sólo hay una fila, así que cogemos la información directamente
+        $info = $datos[0];
+
+        return $this->render('buscador/detalles.html.twig', [
+            'logueado' => $logueado,
+            'info' => $info,
+        ]);
+    }
+
     #[Route('/busqueda/mapas_fotos', name: 'buscador_mapas')]
     public function mapas_fotos(Request $request): Response{
         $logueado = $this->getUser();
         $archivo = new ArchivoMedicion();
+
+        // Obtengo el manejador de la base de datos
+        $entityManager = $this->getDoctrine()->getManager();
+
+        // Mostrar los datos disponibles en forma de galería
+        $conn = $entityManager->getConnection();
+
+        $sql = 'SELECT * FROM medicion_generica ORDER BY medicion_generica.fecha';
+
+        $sentencia = $conn->prepare($sql);
+        $sentencia->execute();
+
+        $datos = $sentencia->fetchAll();
 
         // Sólo los usuarios logueados pueden acceder al formulario
         // por el que se suben los archivos de medición
@@ -51,9 +89,6 @@ class BuscadorController extends AbstractController
                 $filename = $archivo->getLugar()."_".$idHasheado.".".$extension;
 
                 if ($extension == "txt") {
-                    // Obtengo el manejador de la base de datos
-                    $entityManager = $this->getDoctrine()->getManager();
-
                     // Si el formato es .txt subimos el archivo
                     $file->move($this->getParameter('directorio_mediciones'), $filename);
                     $subido = 'true';
@@ -154,6 +189,7 @@ class BuscadorController extends AbstractController
                     'logueado' => $logueado,
                     'form_archivo' => $formArchivo->createView(),
                     'subido' => $subido,
+                    'datos' => $datos,
                 ]);
             }
 
@@ -162,6 +198,7 @@ class BuscadorController extends AbstractController
                 'logueado' => $logueado,
                 'form_archivo' => $formArchivo->createView(),
                 'subido' => "nada",
+                'datos' => $datos,
             ]);
         }
 
@@ -170,6 +207,7 @@ class BuscadorController extends AbstractController
         return $this->render('buscador/mapas_fotos.html.twig', [
             'controller_name' => 'BuscadorController',
             'logueado' => $logueado,
+            'datos' => $datos,
         ]);
 
         

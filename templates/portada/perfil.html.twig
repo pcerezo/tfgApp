@@ -1,0 +1,80 @@
+{% extends 'portada/base.html.twig' %}
+
+{% block perfil %}
+<div id="usuario" class="col-start-5 col-span-2 ml-16 mr-16 mt-5 pl-8 pr-4 text-2xl border-double border-4 ">
+    <div class="grid grid-cols-2 gap-4 flex justify-items-center">
+        <p class="font-bold">{{ nombrecompleto }}</p>
+        {% if fotoPerfil != "" and fotoPerfil != null %}
+        <img src="/uploads/fotos_perfil/{{fotoPerfil}}" width="100" height="100">
+        {% endif %}
+        <p>Alias: "{{ nick }}."</p>
+        <p>Rol: {{role.rango}}</p>
+        <p class="col-span-2">Biografía: {{ bio }}</p>
+        <a href="/user">Ir al perfil</a>
+    </div>
+</div>
+{% endblock %}
+
+<!--El resto igual que en portada/index.html.twig-->
+{% block title %}
+<title>Calidad lumínica de Granada</title>
+{% endblock %}
+
+{% block banner %}
+<div id="banner" class="col-start-2 ml-5 col-span-3">
+	
+</div>
+{% endblock %}
+
+{% block main_container %}
+<div id="main" class="container mt-10">
+	<div class="row">
+		<div class="9u">
+			<section>
+				<header>
+					<p class="text-4xl">Importancia de la concienciación en la contaminación lumínica</p>
+					<span class="byline">Augue praesent a lacus at urna congue rutrum</span>
+				</header>
+				<p>This is <strong>Ex Machina</strong>, a responsive HTML5 site template freebie by <a href="http://templated.co">TEMPLATED</a>. Released for free under the <a href="http://templated.co/license">Creative Commons Attribution</a> license, so use it for whatever (personal or commercial) &ndash; just give us credit! Check out more of our stuff at <a href="http://templated.co">our site</a> or follow us on <a href="http://twitter.com/templatedco">Twitter</a>.</p>
+				<p>Sed etiam vestibulum velit, euismod lacinia quam nisl id lorem. Quisque erat. Vestibulum pellentesque, justo mollis pretium suscipit, justo nulla blandit libero, in blandit augue justo quis nisl. Fusce mattis viverra elit. Fusce quis tortor. Consectetuer adipiscing elit. Nam pede erat, porta eu, lobortis eget lorem ipsum dolor. Donec placerat odio vel elit. Nullam ante orci, pellentesque eget, tempus quis, ultrices in, est. Curabitur sit amet nulla. Nam in massa. Sed vel tellus. Curabitur sem urna, consequat. Sed etiam vestibulum velit, euismod lacinia quam nisl id lorem. Quisque erat.</p>
+				<p>Sed etiam vestibulum velit, euismod lacinia quam nisl id lorem. Quisque erat. Vestibulum pellentesque, justo mollis pretium suscipit, justo nulla blandit libero, in blandit augue justo quis nisl. Fusce mattis viverra elit. Fusce quis tortor. Consectetuer adipiscing elit. Nam pede erat, porta eu, lobortis eget lorem ipsum dolor. Donec placerat odio vel elit. Nullam ante orci, pellentesque eget, tempus quis, ultrices in, est. Curabitur sit amet nulla. Nam in massa. Sed vel tellus. Curabitur sem urna, consequat. Sed etiam vestibulum velit, euismod lacinia quam nisl id lorem. Quisque erat.</p>
+				<a href="#" class="button">More Details</a>
+			</section>
+		</div>
+		<div class="3u">
+			<section class="sidebar">
+				<header>
+					<h2>Últimos datos</h2>
+				</header>
+				<ul class="style2">
+					<li>
+						<a href="#"><img src="images/pics07.jpg" alt=""></a>
+						<p>Donec leo, vivamus fermentum augue praesent a lacus at urna rutrum.</p>
+					</li>
+					<li>
+						<a href="#"><img src="images/pics08.jpg" alt=""></a>
+						<p>Donec leo, vivamus fermentum augue praesent a lacus at urna rutrum.</p>
+					</li>
+					<li>
+						<a href="#"><img src="images/pics09.jpg" alt=""></a>
+						<p>Donec leo, vivamus fermentum augue praesent a lacus at urna rutrum.</p>
+					</li>
+					<li>
+						<a href="#"><img src="images/pics10.jpg" alt=""></a>
+						<p>Donec leo, vivamus fermentum augue praesent a lacus at urna rutrum.</p>
+					</li>
+				</ul>						
+			</section>
+		</div>
+		
+	</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+
+	<div class="col-start-2 col-span-2">
+		
+	</div>
+
+{% endblock %}

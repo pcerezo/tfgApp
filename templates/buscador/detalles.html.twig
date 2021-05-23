@@ -1,0 +1,35 @@
+{% extends 'buscador/base.html.twig' %}
+
+{% block detalles %}
+<div>
+    <h3 class="text-2xl">Información de la medición</h3>
+    <p class="text-xl">Lugar: <b>{{ info.localizacion }}</b></p>
+    <p>Archivo: {{ info.nombre }}</p>
+    <p>Fecha: {{ info.fecha }}</p>
+    <p>Latitud/Longitud: {{ info.latitud }}/{{ info.longitud }}</p>
+    <p>Altitud: {{ info.altitud }}</p>
+
+    <!--Aquí se construyen los gráficos-->
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar" data-color="white" data-active-color="danger">
+    <div class="sidebar-wrapper">
+      <ul class="nav">
+        <li class="active ">
+          <a href="/busqueda/mapas_fotos">
+            <i class="nc-icon nc-bank"></i>
+            <p>Mapas y fotografías</p>
+          </a>
+        </li>
+        <li>
+          <a href="/busqueda/datos">
+            <i class="nc-icon nc-diamond"></i>
+            <p>Datos y gráficos</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+</div>
+{% endblock %}
