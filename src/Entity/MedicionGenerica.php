@@ -59,7 +59,6 @@ class MedicionGenerica
      */
     private $mediaMagnitud;
 
-
     /**
      * @ORM\Column(type="float")
      */
@@ -79,6 +78,16 @@ class MedicionGenerica
      * @ORM\OneToMany(targetEntity=MedicionIndividual::class, mappedBy="ID_medicion")
      */
     private $medicionesIndividuales;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $grafico;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $autoria;
 
     public function __construct()
     {
@@ -262,6 +271,28 @@ class MedicionGenerica
     {
         $this->temp_sensor = $temp_sensor;
 
+        return $this;
+    }
+
+    public function getGrafico(): ?string
+    {
+        return $this->grafico;
+    }
+
+    public function setGrafico(string $grafico): self {
+        $this->grafico = $grafico;
+
+        return $this;
+    }
+
+    public function getAutoria(): ?string
+    {
+        return $this->autoria;
+    }
+
+    public function setAutoria(string $autor): self {
+        $this->autoria = $autor;
+        
         return $this;
     }
 }

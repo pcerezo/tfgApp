@@ -18,6 +18,10 @@ buscador_detalles:
   path: /busqueda/detalles/{id}
   controller: App\Controller\BuscadorController::detalles
 
+buscador_descargar:
+  path: /busqueda/descargar/{id}
+  controller: App\Controller\BuscadorController::descargarTodo
+
 usuarios:
   path: /user
   controller: App\Controller\UserController::index

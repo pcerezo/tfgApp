@@ -8,8 +8,21 @@
     <p>Fecha: {{ info.fecha }}</p>
     <p>Latitud/Longitud: {{ info.latitud }}/{{ info.longitud }}</p>
     <p>Altitud: {{ info.altitud }}</p>
+    <p>Autoría: {{ info.autoria }}</p>
 
     <!--Aquí se construyen los gráficos-->
+    <img src="{{ grafico }}" height="200" width="200">
+
+    <p>Más información de medición: <a href="{{ enlace }}">pinchar aquí</a></p>
+
+    <a href="/busqueda/descargar/{{ info.id }}" class="button">Descargar todo</a>
+
+    <!--Tabla de datos adicionales de www.meteoblue.com-->
+    <br>
+    <br>
+
+    {{ tabla | raw }}
+
 </div>
 {% endblock %}
 

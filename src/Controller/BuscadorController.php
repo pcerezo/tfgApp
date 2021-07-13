@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\SubirArchivoMedicionType;
 use App\Form\User;
+use ZipArchive;
+use DOMDocument;
+use DomXPath;
 use App\Entity\ArchivoMedicion;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -29,6 +32,55 @@ class BuscadorController extends AbstractController
         return $this->redirectToRoute('buscador_mapas');
     }
 
+    #[Route('/busqueda/descargar', name: 'buscador_descargar')]
+    public function descargarTodo($id): Response {
+        $logueado = $this->getUser();
+        // Inicio el objeto que crea el comprimido zip
+        $zip = new ZipArchive();
+
+        // A partir del Id obtengo el objeto de medición en cuestión
+        $entityManager = $this->getDoctrine()->getManager();
+
+        // Obtener el nombre del archivo a partir del id
+        $conn = $entityManager->getConnection();
+
+        $sql = "SELECT * FROM medicion_generica WHERE id=$id";
+
+        // Se ejecuta la sentencia SQL
+        $sentencia = $conn->prepare($sql);
+        $sentencia->execute();
+        $datos = $sentencia->fetchAll();
+        $info = $datos[0];
+
+        $directorioMedicion = $this->getParameter('directorio_mediciones')."/".$info["grafico"];
+
+        $nombreZip = "$directorioMedicion/descarga.zip";
+
+        if($zip->open($nombreZip, ZipArchive::CREATE) === TRUE) {
+            // Añado archivos al zip y lo cierro
+            $zip->addFile($directorioMedicion."/".$info['grafico'].".png", $info['grafico'].".png");
+            $zip->addFile($directorioMedicion."/".$info['grafico'].".png", $info['grafico'].".txt");
+            $zip->close();
+    
+            // Descargo el zip
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Expires: 0");
+            header('Content-Disposition: attachment; filename="'.basename($nombreZip).'"');
+            header('Content-Length: ' . filesize($nombreZip));
+            header('Pragma: public');
+            readfile("$directorioMedicion/descarga.zip");
+
+            echo 'ok';
+        }
+        else echo 'failed';
+
+        return $this->render("buscador/datos.html.twig", [
+            'logueado' => $logueado,
+        ]);
+    }
+
     #[Route('/busqueda/detalles', name: 'buscador_detalles')]
     public function detalles($id): Response {
         $logueado = $this->getUser();
@@ -41,16 +93,39 @@ class BuscadorController extends AbstractController
 
         $sql = "SELECT * FROM medicion_generica WHERE id=$id";
 
+        // Se ejecuta la sentencia SQL
         $sentencia = $conn->prepare($sql);
         $sentencia->execute();
-
         $datos = $sentencia->fetchAll();
+
         // Sólo hay una fila, así que cogemos la información directamente
         $info = $datos[0];
+        $grafico = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"].".png";
+
+        $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E";
+
+        // Obtengo el texto html de la página
+        $html = file_get_contents($this->getParameter('directorio_mediciones')."/".$info["grafico"]."/www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E.html");
+
+        // Genero el DOM
+        $doc = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML($html, LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NONET);
+
+        $xpath = new DomXPath($doc);
+        $nodeList = $xpath->query("//table[@class='table-seeing']");
+        $node = $nodeList->item(0);
+        //$tabla = $node->ownerDocument->saveXML($node);
+        
+        // Obtengo la tabla con datos de diversas mediciones
+        $tabla = $node->ownerDocument->saveHTML($node);
 
         return $this->render('buscador/detalles.html.twig', [
             'logueado' => $logueado,
             'info' => $info,
+            'grafico' => $grafico,
+            'enlace' => $enlaceMeteo,
+            'tabla' => $tabla,
         ]);
     }
 
@@ -76,8 +151,8 @@ class BuscadorController extends AbstractController
         // por el que se suben los archivos de medición
         if ($logueado) {
             $formArchivo = $this->createForm(SubirArchivoMedicionType::class, $archivo);
-
             $formArchivo->handleRequest($request);
+
             // Si pulsamos aceptar subimos el archivo
             if ($formArchivo->isSubmitted() && $formArchivo->isValid()) {
                 //Obtengo el archivo
@@ -90,16 +165,23 @@ class BuscadorController extends AbstractController
 
                 if ($extension == "txt") {
                     // Si el formato es .txt subimos el archivo
-                    $file->move($this->getParameter('directorio_mediciones'), $filename);
+                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$archivo->getLugar()."_".$idHasheado;
+                    if (!file_exists($directorioMediciones)) {
+                        mkdir($directorioMediciones);
+                    }
+                    $file->move($directorioMediciones, $filename);
                     $subido = 'true';
+
+                    // se crea la imagen de interpolación
+                    $salida = $archivo->getLugar()."_".$idHasheado;
+                    $command = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida.".png 1");
+                    shell_exec($command);
 
                     $media_temp_sensor = $media_temp_infrarroja = $media_sl = $media_bat = 0;
 
                     // Lectura del archivo de medición para almacenar sus datos en la base de datos
-                    $medicion = file("../public/uploads/mediciones/".$filename);
-                    // Se salta la primera línea
-                    //$linea = fgets($medicion[1]);
-                    //$linea = $medicion[1];
+                    $medicion = file($directorioMediciones."/".$filename);
+                    // Se salta a la segunda línea que es medicion[1]
 
                     foreach($medicion as $linea) {
                         //Se lee cada dato separado por tabulación
@@ -120,7 +202,7 @@ class BuscadorController extends AbstractController
                         $media_sl += $sl;
                         $media_bat += $bat;
                     }
-                    //} while (!feof($medicion));
+                    
 
                     $num_mediciones = $registros[0];
 
@@ -139,23 +221,24 @@ class BuscadorController extends AbstractController
                     $medicionGenerica->setLongitud($longitud);
                     $medicionGenerica->setNombre($nombre);
                     $medicionGenerica->setLocalizacion($lugar);
+                    $medicionGenerica->setGrafico($salida);
+                    $medicionGenerica->setAutoria($this->getUser()->getUsername());
+
                     // Valores media
                     $medicionGenerica->setTempSensor($temp_sensor);
                     $medicionGenerica->setTempInfrarroja($temp_infrarroja);
                     $medicionGenerica->setAltitud($sl);
                     $medicionGenerica->setMediaMagnitud($magnitud);
                     $medicionGenerica->setBat($bat);
+
                     // Se almacena en la base de datos
                     $entityManager->persist($medicionGenerica);
                     $entityManager->flush();
 
-                    //fclose($medicion);
-
                     // Creada la medición genérica volvemos a leer quedándonos con los datos individuales
-                    $medicion = file("../public/uploads/mediciones/".$filename);//, "r");
-                    // Se salta la primera línea
-                    //$linea = fgets($medicion);
-
+                    $medicion = file($directorioMediciones."/".$filename);
+                   
+                    // Datos individuales
                     foreach($medicion as $linea) {
                         //Se lee cada dato separado por tabulación
                         //$linea = fgets($medicion);
@@ -175,24 +258,30 @@ class BuscadorController extends AbstractController
                         $entityManager->persist($medicionIndividual);
                         $entityManager->flush();
                     }
-                    //} while(!feof($medicion));
 
-                    //fclose($medicion);
+                    // Página de Meteoblue para las coordenadas
+                    $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$latitud."N".$longitud."E";
+                    $obtenerMeteo = escapeshellcmd("wget -p -k -E $enlaceMeteo -P $directorioMediciones");
+                    shell_exec($obtenerMeteo);
                 }
                 else {
                     // En otro caso sólo indicamos el error
                     $subido = 'false';
                 }
 
-                return $this->render('buscador/mapas_fotos.html.twig', [
-                    'controller_name' => 'BuscadorController',
-                    'logueado' => $logueado,
-                    'form_archivo' => $formArchivo->createView(),
-                    'subido' => $subido,
-                    'datos' => $datos,
-                ]);
+                if ($subido != 'false') {
+                    // Mostramos la página con formulario indicando el éxito de la subida
+                    return $this->render('buscador/mapas_fotos.html.twig', [
+                        'controller_name' => 'BuscadorController',
+                        'logueado' => $logueado,
+                        'form_archivo' => $formArchivo->createView(),
+                        'subido' => $subido,
+                        'datos' => $datos,
+                    ]);
+                }
             }
 
+            // Si no pulsamos para subir archivo, mostramos la página con su formulario
             return $this->render('buscador/mapas_fotos.html.twig', [
                 'controller_name' => 'BuscadorController',
                 'logueado' => $logueado,

@@ -17,6 +17,7 @@ class SecurityController extends AbstractController
         $logueado = false;
         if ($this->getUser()) {
             $logueado = true;
+            
 
             return $this->render('portada/index.html.twig', [
                 'logueado' => $logueado,
