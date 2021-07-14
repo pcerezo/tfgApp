@@ -11,11 +11,13 @@ class ContactoController extends AbstractController
     #[Route('/contacto', name: 'contacto')]
     public function index(): Response
     {
+
         $nick = "";
         $logueado = $this->getUser();
         $nombrecompleto = "";
         $role = "";
         $foto = "";
+        $bio = "";
 
         if ($logueado){
             $nick = $this->getUser()->getNick();
@@ -24,6 +26,14 @@ class ContactoController extends AbstractController
             $foto = $this->getUser()->getFotoPerfil();
         }
         
+        // Lectura de la biografía del usuario contenida en un archivo
+        $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
+        while (!feof($archivo_bio)) {
+            $linea = fgets($archivo_bio);
+            $bio = $bio.$linea; // Se concatena línea a línea
+        }
+
+
         return $this->render('contacto/index.html.twig', [
             'controller_name' => 'PortadaController',
             'logueado' => $logueado,
@@ -35,6 +45,7 @@ class ContactoController extends AbstractController
             'nombrecompleto' => $nombrecompleto,
             'role' => $role,
             'fotoPerfil' => $foto,
+            'bio' => $bio,
         ]);
     }
 }

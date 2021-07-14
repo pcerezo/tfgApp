@@ -6,6 +6,7 @@
 parameters:
     directorio_fotos: '%kernel.project_dir%/public/uploads/fotos_perfil'
     directorio_mediciones: '%kernel.project_dir%/public/uploads/mediciones'
+    directorio_mapa_js: '%kernel.project_dir%/public/data'
 
 services:
     # default configuration for services in *this* file

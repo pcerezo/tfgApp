@@ -29,3 +29,7 @@ usuarios:
 contacto:
   path: /contacto
   controller: App\Controller\ContactoController::index
+
+mapa_qgis:
+  path: /mapa
+  controller: App\Controller\MapaQgisController::index
