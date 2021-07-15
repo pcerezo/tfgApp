@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use DateTime;
 
 use App\Entity\MedicionGenerica;
 use App\Entity\MedicionIndividual;
@@ -213,9 +214,14 @@ class BuscadorController extends AbstractController
                     
                     // Guardamos la info. genérica de la medición
                     $medicionGenerica = new MedicionGenerica();
-                    $date = date_create_from_format('Y-m-d', $fecha);
+                    //$date = date_create_from_format('Y-m-d', $fecha);
+                    
+                    //Pasamos la fecha a string para que se pueda dar formato
+                    $date = new DateTime($fecha);
+                    $dateString = $date->format('Y-m-d');
+                    $dateFormat = date_create_from_format('Y-m-d', $dateString);
                     $time = date_create_from_format('H:i:s', $hora);
-                    $medicionGenerica->setFecha($date);
+                    $medicionGenerica->setFecha($dateFormat);
                     $medicionGenerica->setHora($time);
                     $medicionGenerica->setLatitud($latitud);
                     $medicionGenerica->setLongitud($longitud);
