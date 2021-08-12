@@ -105,7 +105,7 @@ class BuscadorController extends AbstractController
 
         $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E";
 
-        // Obtengo el texto html de la página
+        // Obtengo el texto html de la página de Meteoblue
         $html = file_get_contents($this->getParameter('directorio_mediciones')."/".$info["grafico"]."/www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E.html");
 
         // Genero el DOM
@@ -113,6 +113,7 @@ class BuscadorController extends AbstractController
         libxml_use_internal_errors(true);
         $doc->loadHTML($html, LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NONET);
 
+        // Ahora accedo a la tabla en la que se muestran los datos meteorológicos
         $xpath = new DomXPath($doc);
         $nodeList = $xpath->query("//table[@class='table-seeing']");
         $node = $nodeList->item(0);
@@ -184,6 +185,7 @@ class BuscadorController extends AbstractController
                     $medicion = file($directorioMediciones."/".$filename);
                     // Se salta a la segunda línea que es medicion[1]
 
+                    // Datos genéricos TODO: alterar la BD según explicado en el diseño en la documentación
                     foreach($medicion as $linea) {
                         //Se lee cada dato separado por tabulación
                         $linea = $medicion[1];

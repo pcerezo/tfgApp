@@ -44,20 +44,23 @@ class UserController extends AbstractController
         // Obtengo el manejador de la base de datos
         $entityManager = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+
+        // Creo los formularios mediante Symfony
         $formBotonEditar = $this->createForm(BotonEditarPerfilType::class, $user);
         $form = $this->createForm(PerfilFormType::class, $user);
 
         $formBotonEditar->handleRequest($request);
         $editar = false;
+
+        // Se indica que se va a editar
         if ($formBotonEditar->isSubmitted()) {
             $editar = true;
         }
 
         // El formulario recibe la petición
-        // (cuando se pulsa el botón)
         $form->handleRequest($request);
 
-        // Si se ha pulsado el botón de subir archivo y no hay errores...
+        // Si se ha pulsado el botón de Aceptar y no hay errores...
         if ($form->isSubmitted() && $form->isValid()) {
             // Se obtiene el archivo seleccionado
             $file = $user->getFotoPerfil();
