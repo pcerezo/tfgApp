@@ -51,22 +51,20 @@
     <div id="page">
         <div class="grid grid-cols-6 gap-5">
         {% block banner %}{% endblock %}
-
+        
+        <!--Margen usuario-->
         {% block resumen_login %}{% endblock %}
+        <!--/Margen usuario-->
         </div>
         <!-- Header -->
 
         <!-- Main -->
-
         {% block main_container %}
         {% endblock %}
-        
+        <!-- /Main -->
 
     </div>
-	<!-- /Main -->
-    <!--Margen usuario-->
-    
-    <!--/Margen usuario-->
+
 	<!-- Footer -->
     <footer class="container-fluid h-24 border-solid border-t-2">
     {% block footer %} {% endblock %}
