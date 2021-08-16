@@ -6,9 +6,9 @@ index:
 #  path: /busqueda
 #  controller: App\Controller\BuscadorController::index
 
-buscador_mapas:
-  path: /busqueda/mapas_fotos
-  controller: App\Controller\BuscadorController::mapas_fotos
+buscador_mediciones:
+  path: /busqueda/mediciones_fotos
+  controller: App\Controller\BuscadorController::mediciones_fotos
 
 buscador_datos:
   path: /busqueda/datos

@@ -30,7 +30,7 @@ class BuscadorController extends AbstractController
     {
         $logueado = $this->getUser();
     
-        return $this->redirectToRoute('buscador_mapas');
+        return $this->redirectToRoute('buscador_mediciones');
     }
 
     #[Route('/busqueda/descargar', name: 'buscador_descargar')]
@@ -131,8 +131,8 @@ class BuscadorController extends AbstractController
         ]);
     }
 
-    #[Route('/busqueda/mapas_fotos', name: 'buscador_mapas')]
-    public function mapas_fotos(Request $request): Response{
+    #[Route('/busqueda/mediciones_fotos', name: 'buscador_mediciones')]
+    public function mediciones_fotos(Request $request): Response{
         $logueado = $this->getUser();
         $archivo = new ArchivoMedicion();
 
@@ -279,7 +279,7 @@ class BuscadorController extends AbstractController
 
                 if ($subido != 'false') {
                     // Mostramos la página con formulario indicando el éxito de la subida
-                    return $this->render('buscador/mapas_fotos.html.twig', [
+                    return $this->render('buscador/mediciones_fotos.html.twig', [
                         'controller_name' => 'BuscadorController',
                         'logueado' => $logueado,
                         'form_archivo' => $formArchivo->createView(),
@@ -290,7 +290,7 @@ class BuscadorController extends AbstractController
             }
 
             // Si no pulsamos para subir archivo, mostramos la página con su formulario
-            return $this->render('buscador/mapas_fotos.html.twig', [
+            return $this->render('buscador/mediciones_fotos.html.twig', [
                 'controller_name' => 'BuscadorController',
                 'logueado' => $logueado,
                 'form_archivo' => $formArchivo->createView(),
@@ -301,7 +301,7 @@ class BuscadorController extends AbstractController
 
         // Si el usuario no está logueado no hacemos que cargue el formulario
         // para la subida de archivos
-        return $this->render('buscador/mapas_fotos.html.twig', [
+        return $this->render('buscador/mediciones_fotos.html.twig', [
             'controller_name' => 'BuscadorController',
             'logueado' => $logueado,
             'datos' => $datos,

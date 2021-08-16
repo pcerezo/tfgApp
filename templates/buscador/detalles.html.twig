@@ -1,6 +1,6 @@
 {% extends 'buscador/base.html.twig' %}
 
-{% block detalles %}
+{% block contenido %}
 <div>
     <h3 class="text-2xl">Información de la medición</h3>
     <p class="text-xl">Lugar: <b>{{ info.localizacion }}</b></p>
@@ -30,9 +30,9 @@
     <div class="sidebar-wrapper">
       <ul class="nav">
         <li class="active ">
-          <a href="/busqueda/mapas_fotos">
+          <a href="/busqueda/mediciones_fotos">
             <i class="nc-icon nc-bank"></i>
-            <p>Mapas y fotografías</p>
+            <p>Mediciones y fotografías</p>
           </a>
         </li>
         <li>

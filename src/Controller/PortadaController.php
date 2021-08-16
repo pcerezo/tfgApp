@@ -13,11 +13,7 @@ class PortadaController extends AbstractController
     public function index(): Response
     {
         $logueado = false;
-        $nick="";
-        $nombrecompleto = "";
-        $role = "";
-        $fotoPerfil = "";
-        $bio = "";
+        $nick = $nombrecompleto = $role = $fotoPerfil = $bio = "";
 
         if ($this->getUser()) {
             $logueado = true;
@@ -25,20 +21,19 @@ class PortadaController extends AbstractController
             $nombrecompleto = $this->getUser()->getNombreCompleto();
             $role = $this->getUser()->getRoles();
             $fotoPerfil = $this->getUser()->getFotoPerfil();
-        }
-
-        // Lectura de la biografía del usuario contenida en un archivo
-        $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
-        while (!feof($archivo_bio)) {
-            $linea = fgets($archivo_bio);
-            $bio = $bio.$linea; // Se concatena línea a línea
+        
+            // Lectura de la biografía del usuario contenida en un archivo
+            $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
+            while (!feof($archivo_bio)) {
+                $linea = fgets($archivo_bio);
+                $bio = $bio.$linea; // Se concatena línea a línea
+            }
         }
 
         return $this->render('portada/index.html.twig', [
             'controller_name' => 'PortadaController',
             'logueado' => $logueado,
             'activeInicio' => 'active',
-            'activeBusqueda' => '',
             'activeContacto' => '',
             'activeLogin' => '',
             'nick' => $nick,
