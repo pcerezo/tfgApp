@@ -100,10 +100,11 @@ class UserController extends AbstractController
 
     public function nuevoUsuario($email, $pass, $nick) {
         $entityManager = $this->getDoctrine()->getManager();
-
+        
         $usuario = new User();
+        $passEnc = $this->passwordEncoder->encodePassword($usuario, $pass);
         $usuario->setEmail($email);
-        $usuario->setPassword($pass);
+        $usuario->setPassword($passEnc);
         $usuario->setNick($nick);
 
         // Indico que se deberá insertar en la base de datos

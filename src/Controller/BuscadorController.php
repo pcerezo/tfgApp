@@ -162,12 +162,15 @@ class BuscadorController extends AbstractController
                 $nombre = $file->getClientOriginalName();
                 $lugar = $archivo->getLugar();
                 $extension = pathinfo($nombre, PATHINFO_EXTENSION);
-                $idHasheado = md5($archivo->getId());
-                $filename = $archivo->getLugar()."_".$idHasheado.".".$extension;
+                //$idHasheado = md5($archivo->getId());
+                $id = $archivo->getId();
 
                 if ($extension == "txt") {
-                    // Si el formato es .txt subimos el archivo
-                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$archivo->getLugar()."_".$idHasheado;
+                    // Si la extensión es .txt le damos nombre al fichero
+                    $filename = $archivo->getLugar()."_".$id.".".$extension;
+                    
+                    // y se sube el archivo
+                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$archivo->getLugar()."_".$id;
                     if (!file_exists($directorioMediciones)) {
                         mkdir($directorioMediciones);
                     }
@@ -175,7 +178,7 @@ class BuscadorController extends AbstractController
                     $subido = 'true';
 
                     // se crea la imagen de interpolación
-                    $salida = $archivo->getLugar()."_".$idHasheado;
+                    $salida = $archivo->getLugar()."_".$id;
                     $command = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida.".png 1");
                     shell_exec($command);
 
@@ -206,13 +209,14 @@ class BuscadorController extends AbstractController
                         $media_bat += $bat;
                     }
                     
-
+                    // Obtenemos los valores de las medias
                     $num_mediciones = $registros[0];
 
                     $media_temp_sensor = $media_temp_sensor/$num_mediciones;
                     $media_temp_infrarroja = $media_temp_infrarroja/$num_mediciones;
                     $media_sl = $media_sl/$num_mediciones;
                     $media_bat = $media_bat/$num_mediciones;
+                    
                     
                     // Guardamos la info. genérica de la medición
                     $medicionGenerica = new MedicionGenerica();
