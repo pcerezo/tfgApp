@@ -231,7 +231,7 @@ class BuscadorController extends AbstractController
                     $medicionGenerica->setHora($time);
                     $medicionGenerica->setLatitud($latitud);
                     $medicionGenerica->setLongitud($longitud);
-                    $medicionGenerica->setNombre($nombre);
+                    $medicionGenerica->setArchivo($nombre);
                     $medicionGenerica->setLocalizacion($lugar);
                     $medicionGenerica->setGrafico($salida);
                     $medicionGenerica->setAutoria($this->getUser()->getUsername());
@@ -240,7 +240,6 @@ class BuscadorController extends AbstractController
                     $medicionGenerica->setTempSensor($temp_sensor);
                     $medicionGenerica->setTempInfrarroja($temp_infrarroja);
                     $medicionGenerica->setAltitud($sl);
-                    $medicionGenerica->setMediaMagnitud($magnitud);
                     $medicionGenerica->setBat($bat);
 
                     // Se almacena en la base de datos

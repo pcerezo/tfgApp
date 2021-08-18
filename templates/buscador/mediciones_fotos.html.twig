@@ -34,8 +34,8 @@
         <!--Cada elemento rodeado por bordes-->
         <div id="elemento" class="rounded border border-solid grid justify-items-center">
           <p class="font-bold text-lg">{{ row.localizacion }}</p>
-          <p>{{ row.nombre }}</p>
           <p>{{ row.fecha }}</p>
+          <p>{{ row.autoria }}</p>
           <a href="detalles/{{ row.id }}">Ver detalles</a>
         </div>
       {% endfor %}

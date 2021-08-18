@@ -20,6 +20,26 @@ class MedicionGenerica
     private $id;
 
     /**
+     * @ORM\Column(type="date")
+     */
+    private $fecha;
+
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $hora;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $archivo;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $grafico;
+
+    /**
      * @ORM\Column(type="float")
      */
     private $latitud;
@@ -50,6 +70,16 @@ class MedicionGenerica
     private $medicionesIndividuales;
 
     /**
+     * @ORM\Column(type="float")
+     */
+    private $temp_infrarroja;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $temp_sensor;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $autoria;
@@ -64,6 +94,52 @@ class MedicionGenerica
         return $this->id;
     }
 
+    public function getFecha(): ?\DateTimeInterface
+    {
+        return $this->fecha;
+    }
+
+    public function setFecha(\DateTimeInterface $fecha): self
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getHora(): ?\DateTimeInterface
+    {
+        return $this->hora;
+    }
+
+    public function setHora(\DateTimeInterface $hora): self
+    {
+        $this->hora = $hora;
+
+        return $this;
+    }
+
+    public function getArchivo(): ?string
+    {
+        return $this->archivo;
+    }
+
+    public function setArchivo(string $archivo): self
+    {
+        $this->archivo = $archivo;
+
+        return $this;
+    }
+
+    public function getGrafico(): ?string
+    {
+        return $this->grafico;
+    }
+
+    public function setGrafico(string $grafico): self {
+        $this->grafico = $grafico;
+
+        return $this;
+    }
 
     public function getLatitud(): ?float
     {
@@ -164,6 +240,41 @@ class MedicionGenerica
     public function setBat(float $bat): self
     {
         $this->bat = $bat;
+
+        return $this;
+    }
+
+    public function getAutoria(): ?string
+    {
+        return $this->autoria;
+    }
+
+    public function setAutoria(string $autor): self {
+        $this->autoria = $autor;
+        
+        return $this;
+    }
+
+    public function getTempInfrarroja(): ?float
+    {
+        return $this->temp_infrarroja;
+    }
+
+    public function setTempInfrarroja(float $temp_infrarroja): self
+    {
+        $this->temp_infrarroja = $temp_infrarroja;
+
+        return $this;
+    }
+
+    public function getTempSensor(): ?float
+    {
+        return $this->temp_sensor;
+    }
+
+    public function setTempSensor(float $temp_sensor): self
+    {
+        $this->temp_sensor = $temp_sensor;
 
         return $this;
     }
