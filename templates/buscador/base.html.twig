@@ -3,7 +3,9 @@
 <html lang="es">
 
 <head>
-    
+    {% block title %}
+    {% endblock %}
+
     <meta charset="utf-8" />
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png">
@@ -12,12 +14,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
-    
-    {% block title %}
-    {% endblock %}
-    <title>
-        Búsqueda de mediciones
-    </title>
+
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
@@ -37,7 +34,8 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/style-desktop.css" />
 
-    
+    {% block link_meta %}
+    {% endblock %}
 </head>
 
 <body class="">
@@ -142,6 +140,9 @@
 <script src="/assets/js/plugins/bootstrap-notify.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
+
+{% block scripts_Qgis %}
+{% endblock %}
 
 </body>
 

@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MapaQgisController extends AbstractController
 {
-    #[Route('/mapa/qgis', name: 'mapa_qgis')]
+    #[Route('/mapa', name: 'mapa_qgis')]
     public function index(): Response
     {
         // Valores por defecto
@@ -82,7 +82,7 @@ class MapaQgisController extends AbstractController
         // Se escribe en el archivo del cual lee qgis
         file_put_contents($rutaDatosMapas, $contenido);
 
-        return $this->render('mapa_qgis/index.html.twig', [
+        return $this->render('buscador/datos.html.twig', [
             'controller_name' => 'MapaQgisController',
             'activeInicio' => $activeInicio,
             'activeBusqueda' => $activeBusqueda,

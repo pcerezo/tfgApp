@@ -10,10 +10,6 @@ buscador_mediciones:
   path: /busqueda/mediciones_fotos
   controller: App\Controller\BuscadorController::mediciones_fotos
 
-buscador_datos:
-  path: /busqueda/datos
-  controller: App\Controller\BuscadorController::datos
-
 buscador_detalles:
   path: /busqueda/detalles/{id}
   controller: App\Controller\BuscadorController::detalles

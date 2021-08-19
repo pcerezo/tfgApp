@@ -60,6 +60,7 @@ class BuscadorController extends AbstractController
         if($zip->open($nombreZip, ZipArchive::CREATE) === TRUE) {
             // Añado archivos al zip y lo cierro
             $zip->addFile($directorioMedicion."/".$info['grafico'].".png", $info['grafico'].".png");
+            $zip->addFile($directorioMedicion."/".$info['grafico']."_1.png", $info['grafico']."_1.png");
             $zip->addFile($directorioMedicion."/".$info['grafico'].".png", $info['grafico'].".txt");
             $zip->close();
     
@@ -102,6 +103,7 @@ class BuscadorController extends AbstractController
         // Sólo hay una fila, así que cogemos la información directamente
         $info = $datos[0];
         $grafico = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"].".png";
+        $grafico_1 = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"]."_1.png";
 
         $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E";
 
@@ -126,6 +128,7 @@ class BuscadorController extends AbstractController
             'logueado' => $logueado,
             'info' => $info,
             'grafico' => $grafico,
+            'grafico_1' => $grafico_1,
             'enlace' => $enlaceMeteo,
             'tabla' => $tabla,
         ]);
@@ -177,10 +180,16 @@ class BuscadorController extends AbstractController
                     $file->move($directorioMediciones, $filename);
                     $subido = 'true';
 
-                    // se crea la imagen de interpolación
+                    // Damos un nombre para las imágenes de salida
                     $salida = $archivo->getLugar()."_".$id;
-                    $command = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida.".png 1");
+                    // Se crea la imagen por defecto
+                    $command = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida.".png");
+                    // Se crea la imagen suavizada
+                    $command_1 = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida."_1.png 1");
+                    
+                    // Se ejecuta el script
                     shell_exec($command);
+                    shell_exec($command_1);
 
                     $media_temp_sensor = $media_temp_infrarroja = $media_sl = $media_bat = 0;
 
@@ -313,10 +322,4 @@ class BuscadorController extends AbstractController
         
     }
 
-    public function datos(): Response{
-        $logueado = $this->getUser();
-        return $this->render('buscador/datos.html.twig', [
-            'logueado' => $logueado,
-        ]);
-    }
 }

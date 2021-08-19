@@ -1,25 +1,571 @@
 {% extends 'buscador/base.html.twig' %}
 
-{% block title %}
-<title>Busqueda de datos</title>
+{% block title %}<title>Mapa de las mediciones</title>{% endblock %}
+
+{% block link_meta %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+        <link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        #map {
+            width: 937px;
+            height: 591px;
+        }
+        </style>
 {% endblock %}
 
 {% block titular %}
-<p class="font-serif text-5xl">Búsqueda de datos</p>
+<p class="font-serif text-5xl">Mapa interactivo de las mediciones realizadas en la provincia de Granada</p>
 {% endblock %}
 
 {% block contenido %}
 <div class="row">
     <div class="col-md-12">
-        <form class="form">
-          <label>Buscar por fecha<input type="date"></label>
-          <label>Buscar por ubicación<input type="text"></label>
-
-          <button type="submit" class="btn btn-secondary">Buscar</button>
-        </form>
+        <div id="map"></div>
     </div>
 </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/GranadaProvinciaSimlificadoNegativo_1.js"></script>
+        <script src="data/SombreadoGranada1_2.js"></script>
+        <script src="data/SombreadoGranada2_3.js"></script>
+        <script src="data/SombreadoGranada3_4.js"></script>
+        <script src="data/medicionesCielo_5.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:16, minZoom:8
+        }).fitBounds([[36.26236637067371,-5.341579308022073],[38.57044629460949,-0.7207933369491394]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            map.setMaxBounds(map.getBounds());
+        }
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 8,
+            maxZoom: 16,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        function pop_GranadaProvinciaSimlificadoNegativo_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_GranadaProvinciaSimlificadoNegativo_1_0() {
+            return {
+                pane: 'pane_GranadaProvinciaSimlificadoNegativo_1',
+                opacity: 1,
+                color: 'rgba(47,47,47,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,109,109,0.30196078431372547)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_GranadaProvinciaSimlificadoNegativo_1');
+        map.getPane('pane_GranadaProvinciaSimlificadoNegativo_1').style.zIndex = 401;
+        map.getPane('pane_GranadaProvinciaSimlificadoNegativo_1').style['mix-blend-mode'] = 'normal';
+        var layer_GranadaProvinciaSimlificadoNegativo_1 = new L.geoJson(json_GranadaProvinciaSimlificadoNegativo_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_GranadaProvinciaSimlificadoNegativo_1',
+            layerName: 'layer_GranadaProvinciaSimlificadoNegativo_1',
+            pane: 'pane_GranadaProvinciaSimlificadoNegativo_1',
+            onEachFeature: pop_GranadaProvinciaSimlificadoNegativo_1,
+            style: style_GranadaProvinciaSimlificadoNegativo_1_0,
+        });
+        bounds_group.addLayer(layer_GranadaProvinciaSimlificadoNegativo_1);
+        map.addLayer(layer_GranadaProvinciaSimlificadoNegativo_1);
+        function pop_SombreadoGranada1_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SombreadoGranada1_2_0() {
+            return {
+                pane: 'pane_SombreadoGranada1_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,89,49,0.2)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_SombreadoGranada1_2');
+        map.getPane('pane_SombreadoGranada1_2').style.zIndex = 402;
+        map.getPane('pane_SombreadoGranada1_2').style['mix-blend-mode'] = 'normal';
+        var layer_SombreadoGranada1_2 = new L.geoJson(json_SombreadoGranada1_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_SombreadoGranada1_2',
+            layerName: 'layer_SombreadoGranada1_2',
+            pane: 'pane_SombreadoGranada1_2',
+            onEachFeature: pop_SombreadoGranada1_2,
+            style: style_SombreadoGranada1_2_0,
+        });
+        bounds_group.addLayer(layer_SombreadoGranada1_2);
+        map.addLayer(layer_SombreadoGranada1_2);
+        function pop_SombreadoGranada2_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SombreadoGranada2_3_0() {
+            return {
+                pane: 'pane_SombreadoGranada2_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,89,49,0.2)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_SombreadoGranada2_3');
+        map.getPane('pane_SombreadoGranada2_3').style.zIndex = 403;
+        map.getPane('pane_SombreadoGranada2_3').style['mix-blend-mode'] = 'normal';
+        var layer_SombreadoGranada2_3 = new L.geoJson(json_SombreadoGranada2_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_SombreadoGranada2_3',
+            layerName: 'layer_SombreadoGranada2_3',
+            pane: 'pane_SombreadoGranada2_3',
+            onEachFeature: pop_SombreadoGranada2_3,
+            style: style_SombreadoGranada2_3_0,
+        });
+        bounds_group.addLayer(layer_SombreadoGranada2_3);
+        map.addLayer(layer_SombreadoGranada2_3);
+
+
+        function style_SombreadoGranada3_4_0() {
+            return {
+                pane: 'pane_SombreadoGranada3_4',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,89,49,0.2)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_SombreadoGranada3_4');
+        map.getPane('pane_SombreadoGranada3_4').style.zIndex = 404;
+        map.getPane('pane_SombreadoGranada3_4').style['mix-blend-mode'] = 'normal';
+        var layer_SombreadoGranada3_4 = new L.geoJson(json_SombreadoGranada3_4, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_SombreadoGranada3_4',
+            layerName: 'layer_SombreadoGranada3_4',
+            pane: 'pane_SombreadoGranada3_4',
+            style: style_SombreadoGranada3_4_0,
+        });
+        bounds_group.addLayer(layer_SombreadoGranada3_4);
+        map.addLayer(layer_SombreadoGranada3_4);
+        function pop_medicionesCielo_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cenit</th>\
+                        <td>' + (feature.properties['cenit'] !== null ? autolinker.link(feature.properties['cenit'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">nombre</th>\
+                        <td>' + (feature.properties['nombre'] !== null ? autolinker.link(feature.properties['nombre'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">foto</th>\
+                        <td><img src="' + (feature.properties['imagen'] !== null ? autolinker.link(feature.properties['imagen'].toLocaleString()) : '') + '" style="width: 100%; min-width:250px" /></td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_medicionesCielo_5_0(feature) {
+            if (feature.properties['cenit'] >= 19.000000 && feature.properties['cenit'] <= 19.500000 ) {
+                return {
+                pane: 'pane_medicionesCielo_5',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,251,186,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['cenit'] >= 19.500000 && feature.properties['cenit'] <= 20.000000 ) {
+                return {
+                pane: 'pane_medicionesCielo_5',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(179,228,198,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['cenit'] >= 20.000000 && feature.properties['cenit'] <= 20.500000 ) {
+                return {
+                pane: 'pane_medicionesCielo_5',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(103,205,210,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['cenit'] >= 20.500000 && feature.properties['cenit'] <= 21.000000 ) {
+                return {
+                pane: 'pane_medicionesCielo_5',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(68,112,171,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['cenit'] >= 21.000000 && feature.properties['cenit'] <= 21.500000 ) {
+                return {
+                pane: 'pane_medicionesCielo_5',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(34,19,132,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_medicionesCielo_5');
+        map.getPane('pane_medicionesCielo_5').style.zIndex = 405;
+        map.getPane('pane_medicionesCielo_5').style['mix-blend-mode'] = 'normal';
+        var layer_medicionesCielo_5 = new L.geoJson(json_medicionesCielo_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_medicionesCielo_5',
+            layerName: 'layer_medicionesCielo_5',
+            pane: 'pane_medicionesCielo_5',
+            onEachFeature: pop_medicionesCielo_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_medicionesCielo_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_medicionesCielo_5);
+        map.addLayer(layer_medicionesCielo_5);
+            var title = new L.Control();
+            title.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+            title.update = function () {
+                this._div.innerHTML = '<h2>Mapa de la calidad del cielo nocturno granadino</h2>';
+            };
+            title.addTo(map);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'medicionesCielo<br /><table><tr><td style="text-align: center;"><img src="legend/medicionesCielo_5_1901950.png" /></td><td>19,0 - 19,5 </td></tr><tr><td style="text-align: center;"><img src="legend/medicionesCielo_5_1952001.png" /></td><td>19,5 - 20,0 </td></tr><tr><td style="text-align: center;"><img src="legend/medicionesCielo_5_2002052.png" /></td><td>20,0 - 20,5 </td></tr><tr><td style="text-align: center;"><img src="legend/medicionesCielo_5_2052103.png" /></td><td>20,5 - 21,0 </td></tr><tr><td style="text-align: center;"><img src="legend/medicionesCielo_5_2102154.png" /></td><td>21,0 - 21,5 </td></tr></table>': layer_medicionesCielo_5,}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_medicionesCielo_5.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['nombre'] !== null?String('<div style="color: #000000; font-size: 14pt; font-family: \'Noto Sans\', sans-serif;">' + layer.feature.properties['nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_medicionesCielo_5'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"cenit": "real"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+        var i = 0;
+        layer_medicionesCielo_5.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['nombre'] !== null?String('<div style="color: #000000; font-size: 14pt; font-family: \'Noto Sans\', sans-serif;">' + layer.feature.properties['nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_medicionesCielo_5'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_cenit = document.createElement("div");
+            div_cenit.id = "div_cenit";
+            div_cenit.className = "slider";
+            document.getElementById("menu").appendChild(div_cenit);
+            var lab_cenit = document.createElement('div');
+            lab_cenit.innerHTML  = 'cenit: <span id="val_cenit"></span>';
+            lab_cenit.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_cenit);
+            var reset_cenit = document.createElement('div');
+            reset_cenit.innerHTML = 'clear filter';
+            reset_cenit.className = 'filterlabel';
+            lab_cenit.className = 'filterlabel';
+            reset_cenit.onclick = function() {
+                sel_cenit.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_cenit);
+            var sel_cenit = document.getElementById('div_cenit');
+            noUiSlider.create(sel_cenit, {
+                connect: true,
+                start: [19.0, 21.4],
+                range: {
+                min: 19.0,
+                max: 21.4
+                }
+            });
+            sel_cenit.noUiSlider.on('update', function (values) {
+            val_cenit = document.getElementById('val_cenit');
+            val_cenit.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+        resetLabels([layer_medicionesCielo_5]);
+        map.on("zoomend", function(){
+            resetLabels([layer_medicionesCielo_5]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_medicionesCielo_5]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_medicionesCielo_5]);
+        });
+        </script>
 {% endblock %}
+
 
 {% block sidebar %}
 <div class="sidebar" data-color="white" data-active-color="danger">
@@ -40,4 +586,10 @@
       </ul>
     </div>
 </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_Qgis %}
+
 {% endblock %}
