@@ -25,13 +25,6 @@ class MapaQgisController extends AbstractController
             $fotoPerfil = $this->getUser()->getFotoPerfil();
         }
 
-        // Lectura de la biografía del usuario contenida en un archivo
-        $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
-        while (!feof($archivo_bio)) {
-            $linea = fgets($archivo_bio);
-            $bio = $bio.$linea; // Se concatena línea a línea
-        }
-
         // Doy valores a los datos para el mapa
         $rutaDatosMapas = $this->getParameter('directorio_mapa_js')."/medicionesCielo_5.js";
 
@@ -56,7 +49,6 @@ class MapaQgisController extends AbstractController
                 
             ]
         );
-
         
         // controlamos que el fid vaya aumentando con cada medición que añadimos 
         $fid = 1;
@@ -82,7 +74,7 @@ class MapaQgisController extends AbstractController
         // Se escribe en el archivo del cual lee qgis
         file_put_contents($rutaDatosMapas, $contenido);
 
-        return $this->render('buscador/datos.html.twig', [
+        return $this->render('buscador/mapa.html.twig', [
             'controller_name' => 'MapaQgisController',
             'activeInicio' => $activeInicio,
             'activeBusqueda' => $activeBusqueda,
