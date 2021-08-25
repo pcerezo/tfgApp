@@ -27,6 +27,8 @@ class ArchivoMedicion
      */
     private $lugar;
 
+    private $observaciones;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +54,18 @@ class ArchivoMedicion
     public function setLugar(string $lugar): self
     {
         $this->lugar = $lugar;
+
+        return $this;
+    }
+
+    public function getObservaciones(): ?string 
+    {
+        return $this->observaciones;
+    }
+
+    public function setObservaciones(string $observaciones): self
+    {
+        $this->observaciones = $observaciones;
 
         return $this;
     }

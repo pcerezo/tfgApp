@@ -10,6 +10,8 @@
     <p>Altitud: {{ info.altitud }}</p>
     <p>Autoría: {{ info.autoria }}</p>
 
+    <p class="text-xl">Observaciones: {{ observaciones }}</p>
+
     <!--Aquí se construyen los gráficos-->
     <img src="{{ grafico }}" height="200" width="200">
     <img src="{{ grafico_1 }}" height="200" width="200">
@@ -37,7 +39,7 @@
           </a>
         </li>
         <li>
-          <a href="/busqueda/datos">
+          <a href="/mapa">
             <i class="nc-icon nc-diamond"></i>
             <p>Datos y gráficos</p>
           </a>

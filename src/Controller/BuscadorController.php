@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 use DateTime;
 
 use App\Entity\MedicionGenerica;
@@ -61,10 +62,11 @@ class BuscadorController extends AbstractController
             // Añado archivos al zip y lo cierro
             $zip->addFile($directorioMedicion."/".$info['grafico'].".png", $info['grafico'].".png");
             $zip->addFile($directorioMedicion."/".$info['grafico']."_1.png", $info['grafico']."_1.png");
-            $zip->addFile($directorioMedicion."/".$info['grafico'].".png", $info['grafico'].".txt");
+            $zip->addFile($directorioMedicion."/".$info['grafico'].".txt", $info['grafico'].".txt");
+            $zip->addFile($directorioMedicion."/www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E.html", $info['grafico']."_Meteoblue.html");
             $zip->close();
     
-            // Descargo el zip
+            // Preparo las cabeceras para descargar el zip
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
             header("Cache-Control: no-cache, must-revalidate");
@@ -72,15 +74,13 @@ class BuscadorController extends AbstractController
             header('Content-Disposition: attachment; filename="'.basename($nombreZip).'"');
             header('Content-Length: ' . filesize($nombreZip));
             header('Pragma: public');
+
+            // Se descarga
             readfile("$directorioMedicion/descarga.zip");
 
             echo 'ok';
         }
         else echo 'failed';
-
-        return $this->render("buscador/datos.html.twig", [
-            'logueado' => $logueado,
-        ]);
     }
 
     #[Route('/busqueda/detalles', name: 'buscador_detalles')]
@@ -102,9 +102,22 @@ class BuscadorController extends AbstractController
 
         // Sólo hay una fila, así que cogemos la información directamente
         $info = $datos[0];
+        // Obtengo el texto del fichero de las observaciones
+        $archivo_observaciones = $this->getParameter('directorio_mediciones')."/".$info["grafico"]."/".$info["grafico"]."_observaciones.txt";
+        if (file_exists($archivo_observaciones)){
+            $descriptor_observaciones = fopen($archivo_observaciones, "r");
+            $texto_observaciones = fread($descriptor_observaciones, filesize($archivo_observaciones));
+        }
+        else {
+            // Si no existe dejamos la variable vacía
+            $texto_observaciones = "";
+        }
+
+        // Obtengo los gráficos generados
         $grafico = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"].".png";
         $grafico_1 = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"]."_1.png";
-
+        
+        // Obtengo la tabla de datos del fichero de Meteoblue
         $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E";
 
         // Obtengo el texto html de la página de Meteoblue
@@ -117,6 +130,11 @@ class BuscadorController extends AbstractController
 
         // Ahora accedo a la tabla en la que se muestran los datos meteorológicos
         $xpath = new DomXPath($doc);
+
+        while ($celestialNode = $xpath->query("//td[@class='celestial']")->item(0)) {
+            $celestialNode->parentNode->removeChild($celestialNode);
+        };
+
         $nodeList = $xpath->query("//table[@class='table-seeing']");
         $node = $nodeList->item(0);
         //$tabla = $node->ownerDocument->saveXML($node);
@@ -131,6 +149,7 @@ class BuscadorController extends AbstractController
             'grafico_1' => $grafico_1,
             'enlace' => $enlaceMeteo,
             'tabla' => $tabla,
+            'observaciones' => $texto_observaciones,
         ]);
     }
 
@@ -146,11 +165,18 @@ class BuscadorController extends AbstractController
         $conn = $entityManager->getConnection();
 
         $sql = 'SELECT * FROM medicion_generica ORDER BY medicion_generica.fecha';
-
         $sentencia = $conn->prepare($sql);
         $sentencia->execute();
-
         $datos = $sentencia->fetchAll();
+
+        // Obtengo el último id para obtener el siguiente
+        $sql_lastId = 'SELECT Id FROM medicion_generica ORDER BY medicion_generica.id DESC LIMIT 1';
+        $sentencia = $conn->prepare($sql_lastId);
+        $sentencia->execute();
+        $lastId = $sentencia->fetch()["Id"];
+
+        $nextId = $lastId+1;
+
 
         // Sólo los usuarios logueados pueden acceder al formulario
         // por el que se suben los archivos de medición
@@ -160,43 +186,45 @@ class BuscadorController extends AbstractController
 
             // Si pulsamos aceptar subimos el archivo
             if ($formArchivo->isSubmitted() && $formArchivo->isValid()) {
-                //Obtengo el archivo
+                // Obtengo el archivo de datos
                 $file = $archivo->getNombre();
+                // Se le da nombre y extensión
                 $nombre = $file->getClientOriginalName();
                 $lugar = $archivo->getLugar();
                 $extension = pathinfo($nombre, PATHINFO_EXTENSION);
-                //$idHasheado = md5($archivo->getId());
-                $id = $archivo->getId();
 
-                if ($extension == "txt") {
-                    // Si la extensión es .txt le damos nombre al fichero
-                    $filename = $archivo->getLugar()."_".$id.".".$extension;
-                    
-                    // y se sube el archivo
-                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$archivo->getLugar()."_".$id;
+                // Damos un nombre base para los ficheros que se crean
+                $salida = $archivo->getLugar()."_".$nextId;
+                $filename = $salida.".".$extension;
+                print("Salida: ".$salida);
+
+                // El archivo debe ser .txt y no estar vacío
+                if ($extension == "txt") {         
+                    print("\nTiene extensión txt");           
+                    // Se sube el archivo
+                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$salida;
                     if (!file_exists($directorioMediciones)) {
                         mkdir($directorioMediciones);
                     }
+                    // Se sube el archivo de las mediciones a su directorio
                     $file->move($directorioMediciones, $filename);
-                    $subido = 'true';
 
-                    // Damos un nombre para las imágenes de salida
-                    $salida = $archivo->getLugar()."_".$id;
-                    // Se crea la imagen por defecto
-                    $command = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida.".png");
-                    // Se crea la imagen suavizada
-                    $command_1 = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida."_1.png 1");
-                    
-                    // Se ejecuta el script
-                    shell_exec($command);
-                    shell_exec($command_1);
-
+                    // Se anotan las observaciones escritas en el formulario
+                    // en un archivo con permisos de escritura
+                    $observaciones = $directorioMediciones."/".$salida."_observaciones.txt";
+                    $descriptorObservaciones = fopen($observaciones, "w");
+                    fwrite($descriptorObservaciones, $archivo->getObservaciones());
+                    fclose($descriptorObservaciones);
                     $media_temp_sensor = $media_temp_infrarroja = $media_sl = $media_bat = 0;
 
                     // Lectura del archivo de medición para almacenar sus datos en la base de datos
                     $medicion = file($directorioMediciones."/".$filename);
-                    // Se salta a la segunda línea que es medicion[1]
-
+                    
+                    // Se comprueba que el archivo de texto sigue el formato de datos
+                    // # 	TASD00	ci:20.48	T IR	T Sens	Mag 	Hz 	Alt	Azi 	Lat 	Lon 	SL	Bat
+                    $indices = explode("\t", $medicion[0]);
+                    print("\nIndices: ".$indices[0]);
+                    print("\nCumple con el formato");
                     // Datos genéricos TODO: alterar la BD según explicado en el diseño en la documentación
                     foreach($medicion as $linea) {
                         //Se lee cada dato separado por tabulación
@@ -257,7 +285,7 @@ class BuscadorController extends AbstractController
 
                     // Creada la medición genérica volvemos a leer quedándonos con los datos individuales
                     $medicion = file($directorioMediciones."/".$filename);
-                   
+                
                     // Datos individuales
                     foreach($medicion as $linea) {
                         //Se lee cada dato separado por tabulación
@@ -279,10 +307,21 @@ class BuscadorController extends AbstractController
                         $entityManager->flush();
                     }
 
-                    // Página de Meteoblue para las coordenadas
+                    // SCRIPT interpolador.py
+                    // Se crea el gráfico por defecto
+                    $command = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida.".png");
+                    // Se crea el gráfico suavizado
+                    $command_1 = escapeshellcmd("python3 /home/pabloc/Documentos/GII/TFG/tfgApp/interpolador.py ".$directorioMediciones."/".$filename." ".$directorioMediciones."/".$salida."_1.png 1");
+                    // Se ejecuta el script
+                    shell_exec($command);
+                    shell_exec($command_1);
+
+                    // WGET Página de Meteoblue para las coordenadas
                     $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$latitud."N".$longitud."E";
                     $obtenerMeteo = escapeshellcmd("wget -p -k -E $enlaceMeteo -P $directorioMediciones");
                     shell_exec($obtenerMeteo);
+
+                    $subido = 'true';
                 }
                 else {
                     // En otro caso sólo indicamos el error
