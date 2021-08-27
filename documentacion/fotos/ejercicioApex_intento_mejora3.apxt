@@ -1,0 +1,23 @@
+trigger PruebaUno on Contact (after update) {
+    // Primero se obtiene la lista de contactos que se han actualizado 
+	List<Contact> listaContactos = [SELECT Id, FirstName, Phone FROM Contact WHERE Id IN :Trigger.New];
+    
+    // Map de las cuentas de todos los usuarios
+    Map<Id,Account> mapAccount = new Map<Id,Account>([SELECT Id, Name FROM Account WHERE Id IN (SELECT AccountId FROM Contact)]);
+    
+    // Iteramos sobre cada contacto de los que se han actualizado
+    for (Contact c: listaContactos) {
+        // Si se ha modificado el número de móvil, se crea la tarea
+        if (c.Phone != Trigger.Old[0].Phone){
+            // Obtenemos la cuenta del contacto mediante su accountId
+           	Account account = mapAccount.get(c.AccountId);
+            
+            // Se crea una nueva tarea
+            Task nuevaTarea = New Task(WhatId=c.Id, Type='Call', AccountName__c=account.Name);
+            System.debug('Comprobar que ' + c.FirstName + 'alteró sus datos y su teléfono.');
+        }
+        
+        
+	}
+}
+    

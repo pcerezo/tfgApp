@@ -2,21 +2,39 @@
 
 {% block contenido %}
 <div>
-    <h3 class="text-2xl">Información de la medición</h3>
-    <p class="text-xl">Lugar: <b>{{ info.localizacion }}</b></p>
-    <p>Archivo: {{ info.archivo }}</p>
-    <p>Fecha: {{ info.fecha }}</p>
-    <p>Latitud/Longitud: {{ info.latitud }}/{{ info.longitud }}</p>
-    <p>Altitud: {{ info.altitud }}</p>
-    <p>Autoría: {{ info.autoria }}</p>
+    {% if editarDatos and logueado %}
+    <div id="formEdicion">
+      <h3 class="text-2xl">Edición de la medición</h3>
+      {{ form(formEdicionMedicion) }}
+    </div>
+    {% else %}
+    <div id="datos" class="">
+      <h3 class="text-2xl">Información de la medición</h3>
+      <p class="text-xl">Lugar: <b>{{ info.localizacion }}</b></p>
+      <p>Archivo: {{ info.archivo }}</p>
+      <p>Fecha y hora: {{ info.fecha }}, {{ info.hora }}</p>
+      <p>Latitud/Longitud: {{ info.latitud }}/{{ info.longitud }}</p>
+      <p>Altitud: {{ info.altitud }}</p>
+      <p>Autoría: {{ info.autoria }}</p>
 
-    <p class="text-xl">Observaciones: {{ observaciones }}</p>
+      <p class="text-xl">Observaciones:</p>
+      <p>{{ observaciones }}</p>
 
-    <!--Aquí se construyen los gráficos-->
-    <img src="{{ grafico }}" height="200" width="200">
-    <img src="{{ grafico_1 }}" height="200" width="200">
+      <!--Aquí se construyen los gráficos-->
+      <div id="imagenes" class="flex flex-wrap">
+        <img src="{{ grafico }}" height="200" width="200">
+        <img src="{{ grafico_1 }}" height="200" width="200">
+      </div>
 
-    <p>Más información de medición: <a href="{{ enlace }}">pinchar aquí</a></p>
+      {% if logueado %}
+      <br>
+      <div class="form">
+        {{ form(formBoton) }}
+      </div>
+      {% endif %}
+      <p>Más información de medición: <a href="{{ enlace }}">Pinchar aquí</a></p>
+    </div>
+    {% endif %}
 
     <a href="/busqueda/descargar/{{ info.id }}" class="button">Descargar todo</a>
 

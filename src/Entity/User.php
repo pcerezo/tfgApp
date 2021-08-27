@@ -50,6 +50,8 @@ class User implements UserInterface
      */
     private $fotoPerfil;
 
+    private $biografia;
+
     public function getFotoPerfil()
     {
         return $this->fotoPerfil;
@@ -164,6 +166,18 @@ class User implements UserInterface
     public function setNombrecompleto(string $nombrecompleto): self
     {
         $this->nombrecompleto = $nombrecompleto;
+
+        return $this;
+    }
+
+    public function getBiografia(): ?string
+    {
+        return $this->biografia;
+    }
+
+    public function setBiografia(string $biografia): self
+    {
+        $this->biografia = $biografia;
 
         return $this;
     }

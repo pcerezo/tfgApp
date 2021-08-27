@@ -84,6 +84,8 @@ class MedicionGenerica
      */
     private $autoria;
 
+    private $observaciones;
+
     public function __construct()
     {
         $this->medicionesIndividuales = new ArrayCollection();
@@ -275,6 +277,18 @@ class MedicionGenerica
     public function setTempSensor(float $temp_sensor): self
     {
         $this->temp_sensor = $temp_sensor;
+
+        return $this;
+    }
+
+    public function getObservaciones(): ?string 
+    {
+        return $this->observaciones;
+    }
+
+    public function setObservaciones(string $observaciones): self
+    {
+        $this->observaciones = $observaciones;
 
         return $this;
     }

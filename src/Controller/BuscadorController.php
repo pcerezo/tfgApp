@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\SubirArchivoMedicionType;
+use App\Form\EdicionMedicionType;
+use App\Form\BotonEdicionMedicionType;
 use App\Form\User;
 use ZipArchive;
 use DOMDocument;
@@ -84,15 +86,15 @@ class BuscadorController extends AbstractController
     }
 
     #[Route('/busqueda/detalles', name: 'buscador_detalles')]
-    public function detalles($id): Response {
+    public function detalles($id, Request $request): Response {
         $logueado = $this->getUser();
+        $editarDatos = false;
 
         // A partir del Id obtengo el objeto de medición en cuestión
         $entityManager = $this->getDoctrine()->getManager();
 
         // Mostrar los datos disponibles en forma de galería
         $conn = $entityManager->getConnection();
-
         $sql = "SELECT * FROM medicion_generica WHERE id=$id";
 
         // Se ejecuta la sentencia SQL
@@ -104,7 +106,9 @@ class BuscadorController extends AbstractController
         $info = $datos[0];
         // Obtengo el texto del fichero de las observaciones
         $archivo_observaciones = $this->getParameter('directorio_mediciones')."/".$info["grafico"]."/".$info["grafico"]."_observaciones.txt";
-        if (file_exists($archivo_observaciones)){
+
+        // El archivo si existe debe contener algo
+        if (file_exists($archivo_observaciones) && filesize($archivo_observaciones) > 0){
             $descriptor_observaciones = fopen($archivo_observaciones, "r");
             $texto_observaciones = fread($descriptor_observaciones, filesize($archivo_observaciones));
         }
@@ -142,6 +146,79 @@ class BuscadorController extends AbstractController
         // Obtengo la tabla con datos de diversas mediciones
         $tabla = $node->ownerDocument->saveHTML($node);
 
+        // Gestionamos la página según se esté logueado o no
+        if ($logueado) {
+            // Formulario para la edición de datos
+            $infoGenerica = new MedicionGenerica();
+            $formularioEdicion = $this->createForm(EdicionMedicionType::class, $infoGenerica);
+            $formularioEdicion->handleRequest($request);
+
+            // Botón formulario para cambiar a la edición de datos
+            $formularioBoton = $this->createForm(BotonEdicionMedicionType::class);
+            $formularioBoton->handleRequest($request);
+
+            // Si pulsamos el botón para editar lo indicamos
+            if ($formularioBoton->isSubmitted()) {
+                $editarDatos = true;
+            }
+            // Si enviamos los datos editados los guardamos
+            else if ($formularioEdicion->isSubmitted()) {
+                $fecha = $infoGenerica->getFecha();
+                $hora = $infoGenerica->getHora();
+                $latitud = $infoGenerica->getLatitud();
+                $longitud = $infoGenerica->getLongitud();
+                $altitud = $infoGenerica->getAltitud();
+                $tempInfrarroja = $infoGenerica->getTempInfrarroja();
+                $tempSensor = $infoGenerica->getTempSensor();
+                $observaciones = $infoGenerica->getObservaciones();
+
+                // Obtenemos el objeto de la base de datos a partir de su id
+                $medicionGenerica = $entityManager->getRepository(MedicionGenerica::class)->find($id);
+                // Asignamos los nuevos datos
+                if ($fecha != null) {
+                    $medicionGenerica->setFecha($fecha);
+                }
+                if ($hora != null) {
+                    $medicionGenerica->setHora($hora);
+                }
+                if ($latitud != null) {
+                    $medicionGenerica->setLatitud($latitud);
+                }
+                if ($longitud != null) {
+                    $medicionGenerica->setLongitud($longitud);
+                }
+                if ($altitud != null) {
+                    $medicionGenerica->setAltitud($altitud);
+                }
+                if ($tempInfrarroja != null) {
+                    $medicionGenerica->setTempInfrarroja($tempInfrarroja);
+                }
+                if ($tempSensor != null) {
+                    $medicionGenerica->setTempSensor($tempSensor);
+                }
+                if ($observaciones != null || $observaciones != "") {
+                    $descriptor_observaciones = fopen($this->getParameter('directorio_mediciones')."/".$info['grafico']."/".$info['grafico']."_observaciones.txt", "w");
+                    fwrite($descriptor_observaciones, $observaciones);
+                    fclose($descriptor_observaciones);
+                }
+
+                $entityManager->flush();
+            }
+
+            return $this->render('buscador/detalles.html.twig', [
+                'logueado' => $logueado,
+                'info' => $info,
+                'grafico' => $grafico,
+                'grafico_1' => $grafico_1,
+                'enlace' => $enlaceMeteo,
+                'tabla' => $tabla,
+                'observaciones' => $texto_observaciones,
+                'editarDatos' => $editarDatos,
+                'formBoton' => $formularioBoton->createView(),
+                'formEdicionMedicion' => $formularioEdicion->createView(),
+            ]);
+        }
+
         return $this->render('buscador/detalles.html.twig', [
             'logueado' => $logueado,
             'info' => $info,
@@ -150,6 +227,7 @@ class BuscadorController extends AbstractController
             'enlace' => $enlaceMeteo,
             'tabla' => $tabla,
             'observaciones' => $texto_observaciones,
+            'editarDatos' => $editarDatos,
         ]);
     }
 
@@ -173,9 +251,9 @@ class BuscadorController extends AbstractController
         $sql_lastId = 'SELECT Id FROM medicion_generica ORDER BY medicion_generica.id DESC LIMIT 1';
         $sentencia = $conn->prepare($sql_lastId);
         $sentencia->execute();
-        $lastId = $sentencia->fetch()["Id"];
+        $lastId = $sentencia->fetch();
 
-        $nextId = $lastId+1;
+        $nextId = $lastId["Id"]+1;
 
 
         // Sólo los usuarios logueados pueden acceder al formulario
@@ -196,11 +274,9 @@ class BuscadorController extends AbstractController
                 // Damos un nombre base para los ficheros que se crean
                 $salida = $archivo->getLugar()."_".$nextId;
                 $filename = $salida.".".$extension;
-                print("Salida: ".$salida);
-
+                
                 // El archivo debe ser .txt y no estar vacío
                 if ($extension == "txt") {         
-                    print("\nTiene extensión txt");           
                     // Se sube el archivo
                     $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$salida;
                     if (!file_exists($directorioMediciones)) {
@@ -223,8 +299,7 @@ class BuscadorController extends AbstractController
                     // Se comprueba que el archivo de texto sigue el formato de datos
                     // # 	TASD00	ci:20.48	T IR	T Sens	Mag 	Hz 	Alt	Azi 	Lat 	Lon 	SL	Bat
                     $indices = explode("\t", $medicion[0]);
-                    print("\nIndices: ".$indices[0]);
-                    print("\nCumple con el formato");
+                    
                     // Datos genéricos TODO: alterar la BD según explicado en el diseño en la documentación
                     foreach($medicion as $linea) {
                         //Se lee cada dato separado por tabulación

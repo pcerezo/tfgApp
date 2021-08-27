@@ -35,12 +35,20 @@ class UserController extends AbstractController
         }
 
         // Lectura de la biografía del usuario contenida en un archivo
-        $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
-        while (!feof($archivo_bio)) {
-            $linea = fgets($archivo_bio);
+        $rutaBio = $this->getParameter('bios_perfil')."/".$nick."_".$id;
+        $ficheroBio = $rutaBio."/bio.txt";
+        if (!file_exists($rutaBio)) {
+            mkdir($ficheroBio);
+        }
+
+        // Se abre el fichero de biografía
+        $descriptorBio = fopen($ficheroBio, "r");
+
+        while (!feof($descriptorBio)) {
+            $linea = fgets($descriptorBio);
             $bio = $bio.$linea; // Se concatena línea a línea
         }
-        fclose($archivo_bio);
+        fclose($descriptorBio);
         // Obtengo el manejador de la base de datos
         $entityManager = $this->getDoctrine()->getManager();
         $user = $this->getUser();
