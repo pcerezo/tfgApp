@@ -271,8 +271,8 @@ class BuscadorController extends AbstractController
                 $lugar = $archivo->getLugar();
                 $extension = pathinfo($nombre, PATHINFO_EXTENSION);
 
-                // Damos un nombre base para los ficheros que se crean
-                $salida = $archivo->getLugar()."_".$nextId;
+                // Damos un nombre base sin espacios para los ficheros que se crean
+                $salida = str_replace(' ', '', $archivo->getLugar())."_".$nextId;
                 $filename = $salida.".".$extension;
                 
                 // El archivo debe ser .txt y no estar vacío

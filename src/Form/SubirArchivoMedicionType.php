@@ -20,7 +20,7 @@ class SubirArchivoMedicionType extends AbstractType
     {
         $builder
             ->add('nombre', FileType::class, array('label' => 'formato .txt', 'data_class' => null))
-            ->add('lugar', TextType::class)
+            ->add('lugar', TextType::class, array('label' => 'Lugar (escribir sin espacios)'))
             ->add('observaciones', TextType::class, array('required' => false))
             ->add('subir', SubmitType::class, array('label' => 'Subir'))
             ->getForm();
