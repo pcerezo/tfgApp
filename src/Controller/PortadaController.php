@@ -15,19 +15,29 @@ class PortadaController extends AbstractController
         $logueado = false;
         $nick = $nombrecompleto = $role = $fotoPerfil = $bio = "";
 
+        // Si el usuario está logueado se obtienen algunos datos
         if ($this->getUser()) {
             $logueado = true;
+            $id = $this->getUser()->getId();
             $nick = $this->getUser()->getNick();
             $nombrecompleto = $this->getUser()->getNombreCompleto();
             $role = $this->getUser()->getRoles();
-            $fotoPerfil = $this->getUser()->getFotoPerfil();
+            $foto = $this->getUser()->getFotoPerfil();
+            $ficheroFoto = $nick."_".$id."/".$foto;
         
+            $rutaBio = $this->getParameter('directorio_bios')."/".$nick."_".$id;
+            $ficheroBio = $rutaBio."/bio.txt";
+
             // Lectura de la biografía del usuario contenida en un archivo
-            $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
-            while (!feof($archivo_bio)) {
-                $linea = fgets($archivo_bio);
-                $bio = $bio.$linea; // Se concatena línea a línea
+            if (file_exists($ficheroBio)) {
+                $descriptorBio = fopen($ficheroBio, "r");
+
+                while (!feof($descriptorBio)) {
+                    $linea = fgets($descriptorBio);
+                    $bio = $bio.$linea; // Se concatena línea a línea
+                }
             }
+            
         }
 
         return $this->render('portada/index.html.twig', [
@@ -39,7 +49,7 @@ class PortadaController extends AbstractController
             'nick' => $nick,
             'nombrecompleto' => $nombrecompleto,
             'role' => $role,
-            'fotoPerfil' => $fotoPerfil,
+            'fotoPerfil' => $ficheroFoto,
             'bio' => $bio,
         ]);
     }

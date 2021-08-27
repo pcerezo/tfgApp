@@ -1,1 +1,0 @@
-Estudiante de Ingeniería Informática en la UGR. Cursando el trabajo fin de grado sobre una aplicación web de monitorización de la contaminación lumínica en la provincia de Granada.
