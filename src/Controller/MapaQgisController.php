@@ -61,7 +61,7 @@ class MapaQgisController extends AbstractController
             $sentencia_cenit->execute();
             $cenit = $sentencia_cenit->fetch();
 
-            $features = [array('type' => 'Feature', 'properties' => array('fid' => $fid, 'cenit' => $cenit['magnitud'], 'nombre' => $datos['localizacion'], 'imagen' => 'uploads/mediciones/'.$datos['grafico'].'/'.$datos['grafico'].'.png'), 'geometry' => array('type' => 'Point', 'coordinates' => [$datos['longitud'], $datos['latitud']]))];    
+            $features = [array('type' => 'Feature', 'properties' => array('fid' => $fid, 'cenit' => $cenit['magnitud'], 'nombre' => $datos['localizacion'], 'imagen' => 'uploads/mediciones/'.$datos['grafico']."_".$datos['fecha'].'/'.$datos['grafico'].'_1.png'), 'geometry' => array('type' => 'Point', 'coordinates' => [$datos['longitud'], $datos['latitud']]))];    
             
             $fid = $fid+1;
 

@@ -57,7 +57,7 @@ class BuscadorController extends AbstractController
         $datos = $sentencia->fetchAll();
         $info = $datos[0];
 
-        $directorioMedicion = $this->getParameter('directorio_mediciones')."/".$info["grafico"];
+        $directorioMedicion = $this->getParameter('directorio_mediciones')."/".$info["grafico"]."_".$info["fecha"];
 
         $nombreZip = "$directorioMedicion/descarga.zip";
 
