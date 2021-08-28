@@ -20,19 +20,22 @@ class ContactoController extends AbstractController
         $bio = "";
 
         if ($logueado){
+            // Obtenemos los datos
+            $id = $this->getUser()->getId();
             $nick = $this->getUser()->getNick();
             $nombrecompleto = $this->getUser()->getNombreCompleto();
             $role = $this->getUser()->getRoles();
             $foto = $this->getUser()->getFotoPerfil();
-        }
-        
-        // Lectura de la biografía del usuario contenida en un archivo
-        $archivo_bio = fopen("../public/uploads/bios_perfil/prueba.txt", "r");
-        while (!feof($archivo_bio)) {
-            $linea = fgets($archivo_bio);
-            $bio = $bio.$linea; // Se concatena línea a línea
-        }
 
+            // Lectura de la biografía del usuario contenida en un archivo
+            $rutaBio = $this->getParameter('directorio_bios')."/".$nick."_".$id;
+            $ficheroBio = $rutaBio."/bio.txt";
+            $descriptorBio = fopen($ficheroBio, "r");
+            while (!feof($descriptorBio)) {
+                $linea = fgets($descriptorBio);
+                $bio = $bio.$linea; // Se concatena línea a línea
+            }
+        }
 
         return $this->render('contacto/index.html.twig', [
             'controller_name' => 'PortadaController',

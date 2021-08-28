@@ -40,12 +40,12 @@ class MedicionGenerica
     private $grafico;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision=8, scale=6)
      */
     private $latitud;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision=8, scale=6)
      */
     private $longitud;
 

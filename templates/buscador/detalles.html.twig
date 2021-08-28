@@ -1,7 +1,7 @@
 {% extends 'buscador/base.html.twig' %}
 
 {% block contenido %}
-<div>
+<div class="main">
     {% if editarDatos and logueado %}
     <div id="formEdicion">
       <h3 class="text-2xl">Edición de la medición</h3>
@@ -28,8 +28,9 @@
 
       {% if logueado %}
       <br>
-      <div class="form">
-        {{ form(formBoton) }}
+      <div class="form flex flex-wrap gap-3">
+        {{ form(formBotonEditar) }}
+        {{ form(formBotonBorrar) }}
       </div>
       {% endif %}
       <p>Más información de medición: <a href="{{ enlace }}">Pinchar aquí</a></p>
@@ -41,7 +42,9 @@
     <!--Tabla de datos adicionales de www.meteoblue.com-->
     <br>
     <br>
+    <div id="tablaMeteorologica">
     {{ tabla | raw }}
+    </div>
 
 </div>
 {% endblock %}

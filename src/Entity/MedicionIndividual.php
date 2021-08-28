@@ -19,7 +19,7 @@ class MedicionIndividual
 
     /**
      * @ORM\ManyToOne(targetEntity=MedicionGenerica::class, inversedBy="medicionesIndividuales")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="cascade")
      */
     private $generica;
 

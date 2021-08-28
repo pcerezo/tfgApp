@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\SubirArchivoMedicionType;
 use App\Form\EdicionMedicionType;
 use App\Form\BotonEdicionMedicionType;
+use App\Form\BotonBorrarMedicionType;
 use App\Form\User;
 use ZipArchive;
 use DOMDocument;
@@ -105,7 +106,8 @@ class BuscadorController extends AbstractController
         // Sólo hay una fila, así que cogemos la información directamente
         $info = $datos[0];
         // Obtengo el texto del fichero de las observaciones
-        $archivo_observaciones = $this->getParameter('directorio_mediciones')."/".$info["grafico"]."/".$info["grafico"]."_observaciones.txt";
+        $directorioMedicion = $this->getParameter('directorio_mediciones')."/".$info["grafico"]."_".$info["fecha"];
+        $archivo_observaciones = $directorioMedicion."/".$info["grafico"]."_observaciones.txt";
 
         // El archivo si existe debe contener algo
         if (file_exists($archivo_observaciones) && filesize($archivo_observaciones) > 0){
@@ -118,14 +120,14 @@ class BuscadorController extends AbstractController
         }
 
         // Obtengo los gráficos generados
-        $grafico = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"].".png";
-        $grafico_1 = "../../uploads/mediciones/".$info["grafico"]."/".$info["grafico"]."_1.png";
+        $grafico = "../../uploads/mediciones/".$info["grafico"]."_".$info["fecha"]."/".$info["grafico"].".png";
+        $grafico_1 = "../../uploads/mediciones/".$info["grafico"]."_".$info["fecha"]."/".$info["grafico"]."_1.png";
         
         // Obtengo la tabla de datos del fichero de Meteoblue
         $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E";
 
         // Obtengo el texto html de la página de Meteoblue
-        $html = file_get_contents($this->getParameter('directorio_mediciones')."/".$info["grafico"]."/www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E.html");
+        $html = file_get_contents($directorioMedicion."/www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E.html");
 
         // Genero el DOM
         $doc = new DOMDocument();
@@ -154,11 +156,15 @@ class BuscadorController extends AbstractController
             $formularioEdicion->handleRequest($request);
 
             // Botón formulario para cambiar a la edición de datos
-            $formularioBoton = $this->createForm(BotonEdicionMedicionType::class);
-            $formularioBoton->handleRequest($request);
+            $formularioBotonEdicion = $this->createForm(BotonEdicionMedicionType::class);
+            $formularioBotonEdicion->handleRequest($request);
+
+            // Botón formulario para borrar la medición de datos
+            $formularioBotonBorrar = $this->createForm(BotonBorrarMedicionType::class);
+            $formularioBotonBorrar->handleRequest($request);
 
             // Si pulsamos el botón para editar lo indicamos
-            if ($formularioBoton->isSubmitted()) {
+            if ($formularioBotonEdicion->isSubmitted()) {
                 $editarDatos = true;
             }
             // Si enviamos los datos editados los guardamos
@@ -177,6 +183,9 @@ class BuscadorController extends AbstractController
                 // Asignamos los nuevos datos
                 if ($fecha != null) {
                     $medicionGenerica->setFecha($fecha);
+                    //Hay que cambiar el nombre de la carpeta
+                    rename($directorioMedicion, $this->getParameter('directorio_mediciones')."/".$info["grafico"]."_".$fecha->format('Y-m-d'));
+                    $directorioMedicion = $this->getParameter('directorio_mediciones')."/".$info["grafico"]."_".$fecha->format('Y-m-d');
                 }
                 if ($hora != null) {
                     $medicionGenerica->setHora($hora);
@@ -197,12 +206,30 @@ class BuscadorController extends AbstractController
                     $medicionGenerica->setTempSensor($tempSensor);
                 }
                 if ($observaciones != null || $observaciones != "") {
-                    $descriptor_observaciones = fopen($this->getParameter('directorio_mediciones')."/".$info['grafico']."/".$info['grafico']."_observaciones.txt", "w");
+                    $descriptor_observaciones = fopen($directorioMedicion."/".$info['grafico']."_observaciones.txt", "w");
                     fwrite($descriptor_observaciones, $observaciones);
                     fclose($descriptor_observaciones);
                 }
 
                 $entityManager->flush();
+
+                return $this->redirectToRoute('buscador_mediciones');
+            }
+            // Si se pulsa el botón de borrar, se elimina la medición
+            else if($formularioBotonBorrar->isSubmitted()) {
+                $medicionGenerica = $entityManager->getRepository(MedicionGenerica::class)->find($id);
+
+                $entityManager->remove($medicionGenerica);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('buscador_mediciones');
+                /*$conn = $entityManager->getConnection();
+                
+                $sql = "DELETE FROM medicion_individual WHERE generica_id=$id";
+
+                // Se ejecuta la sentencia SQL
+                $sentencia = $conn->prepare($sql);
+                $sentencia->execute();*/
             }
 
             return $this->render('buscador/detalles.html.twig', [
@@ -214,7 +241,8 @@ class BuscadorController extends AbstractController
                 'tabla' => $tabla,
                 'observaciones' => $texto_observaciones,
                 'editarDatos' => $editarDatos,
-                'formBoton' => $formularioBoton->createView(),
+                'formBotonBorrar' => $formularioBotonBorrar->createView(),
+                'formBotonEditar' => $formularioBotonEdicion->createView(),
                 'formEdicionMedicion' => $formularioEdicion->createView(),
             ]);
         }
@@ -248,13 +276,13 @@ class BuscadorController extends AbstractController
         $datos = $sentencia->fetchAll();
 
         // Obtengo el último id para obtener el siguiente
-        $sql_lastId = 'SELECT Id FROM medicion_generica ORDER BY medicion_generica.id DESC LIMIT 1';
+        /*$sql_lastId = 'SELECT Id FROM medicion_generica ORDER BY medicion_generica.id DESC LIMIT 1';
         $sentencia = $conn->prepare($sql_lastId);
         $sentencia->execute();
         $lastId = $sentencia->fetch();
 
-        $nextId = $lastId["Id"]+1;
-
+        $nextId = $lastId["Id"]+1;*/
+        
 
         // Sólo los usuarios logueados pueden acceder al formulario
         // por el que se suben los archivos de medición
@@ -272,29 +300,17 @@ class BuscadorController extends AbstractController
                 $extension = pathinfo($nombre, PATHINFO_EXTENSION);
 
                 // Damos un nombre base sin espacios para los ficheros que se crean
-                $salida = str_replace(' ', '', $archivo->getLugar())."_".$nextId;
+                $salida = str_replace(' ', '', $archivo->getLugar());
                 $filename = $salida.".".$extension;
                 
                 // El archivo debe ser .txt y no estar vacío
                 if ($extension == "txt") {         
-                    // Se sube el archivo
-                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$salida;
-                    if (!file_exists($directorioMediciones)) {
-                        mkdir($directorioMediciones);
-                    }
-                    // Se sube el archivo de las mediciones a su directorio
-                    $file->move($directorioMediciones, $filename);
-
-                    // Se anotan las observaciones escritas en el formulario
-                    // en un archivo con permisos de escritura
-                    $observaciones = $directorioMediciones."/".$salida."_observaciones.txt";
-                    $descriptorObservaciones = fopen($observaciones, "w");
-                    fwrite($descriptorObservaciones, $archivo->getObservaciones());
-                    fclose($descriptorObservaciones);
+                    
+                    // Se obtienen los datos del archivo que se sube
                     $media_temp_sensor = $media_temp_infrarroja = $media_sl = $media_bat = 0;
 
                     // Lectura del archivo de medición para almacenar sus datos en la base de datos
-                    $medicion = file($directorioMediciones."/".$filename);
+                    $medicion = file($file);
                     
                     // Se comprueba que el archivo de texto sigue el formato de datos
                     // # 	TASD00	ci:20.48	T IR	T Sens	Mag 	Hz 	Alt	Azi 	Lat 	Lon 	SL	Bat
@@ -359,7 +375,7 @@ class BuscadorController extends AbstractController
                     $entityManager->flush();
 
                     // Creada la medición genérica volvemos a leer quedándonos con los datos individuales
-                    $medicion = file($directorioMediciones."/".$filename);
+                    $medicion = file($file);
                 
                     // Datos individuales
                     foreach($medicion as $linea) {
@@ -381,6 +397,21 @@ class BuscadorController extends AbstractController
                         $entityManager->persist($medicionIndividual);
                         $entityManager->flush();
                     }
+
+                    // Se sube el archivo a su directorio <lugar>_<fecha>
+                    $directorioMediciones = $this->getParameter('directorio_mediciones')."/".$salida."_".$dateString;
+                    if (!file_exists($directorioMediciones)) {
+                        mkdir($directorioMediciones);
+                    }
+                    // Se sube el archivo de las mediciones a su directorio
+                    $file->move($directorioMediciones, $filename);
+
+                    // Se anotan las observaciones escritas en el formulario
+                    // en un archivo con permisos de escritura
+                    $observaciones = $directorioMediciones."/".$salida."_observaciones.txt";
+                    $descriptorObservaciones = fopen($observaciones, "w");
+                    fwrite($descriptorObservaciones, $archivo->getObservaciones());
+                    fclose($descriptorObservaciones);
 
                     // SCRIPT interpolador.py
                     // Se crea el gráfico por defecto

@@ -13,7 +13,7 @@ class PortadaController extends AbstractController
     public function index(): Response
     {
         $logueado = false;
-        $nick = $nombrecompleto = $role = $fotoPerfil = $bio = "";
+        $nick = $nombrecompleto = $role = $fotoPerfil = $bio = $ficheroFoto = "";
 
         // Si el usuario está logueado se obtienen algunos datos
         if ($this->getUser()) {
