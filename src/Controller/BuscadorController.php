@@ -128,25 +128,41 @@ class BuscadorController extends AbstractController
 
         // Obtengo el texto html de la página de Meteoblue
         $html = file_get_contents($directorioMedicion."/www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$info["latitud"]."N".$info["longitud"]."E.html");
-
         // Genero el DOM
         $doc = new DOMDocument();
         libxml_use_internal_errors(true);
         $doc->loadHTML($html, LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NONET);
 
-        // Ahora accedo a la tabla en la que se muestran los datos meteorológicos
+        // Accedo a la columna más a la derecha para borrarla
         $xpath = new DomXPath($doc);
-
         while ($celestialNode = $xpath->query("//td[@class='celestial']")->item(0)) {
             $celestialNode->parentNode->removeChild($celestialNode);
         };
+        // Borro el espacio vacío tan grande que se forma al principio
+        while ($nodoEspacio = $xpath->query("//td[@class='bright-round-balls']")->item(0)) {
+            $nodoEspacio->parentNode->removeChild($nodoEspacio);
+        };
 
+        $xpath->query("//td[@class='new-day']")->item(0)->removeAttribute("colspan");
+
+        // Accedo a la tabla meteorológica
         $nodeList = $xpath->query("//table[@class='table-seeing']");
         $node = $nodeList->item(0);
-        //$tabla = $node->ownerDocument->saveXML($node);
-        
         // Obtengo la tabla con datos de diversas mediciones
         $tabla = $node->ownerDocument->saveHTML($node);
+
+        // Obtengo la imagen de la calidad del aire
+        $enlaceAire = "https://www.meteoblue.com/es/tiempo/outdoorsports/airquality/".$info["latitud"]."N".$info["longitud"]."E_Europe%2FMadrid";
+        $htmlAire = file_get_contents($directorioMedicion."/www.meteoblue.com/es/tiempo/outdoorsports/airquality/".$info["latitud"]."N".$info["longitud"]."E_Europe%2FMadrid.html");
+        // Genero el DOM
+        $docAire = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $docAire->loadHTML($htmlAire, LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NONET);
+        $xpathAire = new DomXPath($docAire);
+
+        $nodeListImagen = $xpathAire->query("//img[@alt='meteoblue']");
+        $nodeImagen = $nodeListImagen->item(0);
+        $imagenAire = $nodeImagen->ownerDocument->saveHTML($nodeImagen);
 
         // Gestionamos la página según se esté logueado o no
         if ($logueado) {
@@ -237,8 +253,10 @@ class BuscadorController extends AbstractController
                 'info' => $info,
                 'grafico' => $grafico,
                 'grafico_1' => $grafico_1,
-                'enlace' => $enlaceMeteo,
+                'enlaceMeteo' => $enlaceMeteo,
+                'enlaceAire' => $enlaceAire,
                 'tabla' => $tabla,
+                'imagenAire' => $imagenAire,
                 'observaciones' => $texto_observaciones,
                 'editarDatos' => $editarDatos,
                 'formBotonBorrar' => $formularioBotonBorrar->createView(),
@@ -252,8 +270,10 @@ class BuscadorController extends AbstractController
             'info' => $info,
             'grafico' => $grafico,
             'grafico_1' => $grafico_1,
-            'enlace' => $enlaceMeteo,
+            'enlaceMeteo' => $enlaceMeteo,
+            'enlaceAire' => $enlaceAire,
             'tabla' => $tabla,
+            'imagenAire' => $imagenAire,
             'observaciones' => $texto_observaciones,
             'editarDatos' => $editarDatos,
         ]);
@@ -426,6 +446,11 @@ class BuscadorController extends AbstractController
                     $enlaceMeteo = "https://www.meteoblue.com/es/tiempo/outdoorsports/seeing/".$latitud."N".$longitud."E";
                     $obtenerMeteo = escapeshellcmd("wget -p -k -E $enlaceMeteo -P $directorioMediciones");
                     shell_exec($obtenerMeteo);
+
+                    // WGET para la calidad del aire
+                    $enlaceAire = "https://www.meteoblue.com/es/tiempo/outdoorsports/airquality/".$latitud."N".$longitud."E_Europe%2FMadrid";
+                    $obtenerAire = escapeshellcmd("wget -p -E $enlaceAire -P $directorioMediciones");
+                    shell_exec($obtenerAire);
 
                     $subido = 'true';
                 }

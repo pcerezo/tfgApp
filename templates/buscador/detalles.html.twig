@@ -27,13 +27,16 @@
       </div>
 
       {% if logueado %}
-      <br>
-      <div class="form flex flex-wrap gap-3">
-        {{ form(formBotonEditar) }}
-        {{ form(formBotonBorrar) }}
-      </div>
+        <br>
+        <div class="form flex flex-wrap gap-3">
+          {{ form(formBotonEditar) }}
+          {{ form(formBotonBorrar) }}
+        </div>
       {% endif %}
-      <p>Más información de medición: <a href="{{ enlace }}">Pinchar aquí</a></p>
+      <div id="enlacesAdicionales">
+        <p> Más información meteorológica del lugar: <a href="{{ enlaceMeteo }}">Pinchar aquí</a></p>
+        <p> Información de la calidad del aire: <a href="{{ enlaceAire }}">Calidad del aire</a></p>
+      </div>
     </div>
     {% endif %}
 
@@ -43,7 +46,7 @@
     <br>
     <br>
     <div id="tablaMeteorologica">
-    {{ tabla | raw }}
+      {{ tabla | raw }}
     </div>
 
 </div>
@@ -62,7 +65,7 @@
         <li>
           <a href="/mapa">
             <i class="nc-icon nc-diamond"></i>
-            <p>Datos y gráficos</p>
+            <p>Mapa Interactivo</p>
           </a>
         </li>
       </ul>
